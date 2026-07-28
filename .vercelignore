@@ -1,0 +1,18 @@
+# server.js is the entry point for a long-lived process — npm start, the
+# Dockerfile, Render. Vercel does not need it: api/index.js is the entry there,
+# and nothing the function requires reaches this file.
+#
+# It has to be kept out of the upload rather than just unused, because leaving it
+# there was actively harmful. Vercel's Node detection built it into a second
+# function and mounted that at /, so the landing page bypassed api/index.js
+# entirely: it imported the app at module scope, which crashes the whole
+# invocation on any configuration error instead of answering with the reason, and
+# it had none of the includeFiles from vercel.json, so it could not have read a
+# page out of views/ even once the database was reachable.
+server.js
+
+# Nothing here is needed to serve a request.
+test
+.github
+render.yaml
+Dockerfile
