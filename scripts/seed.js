@@ -1,9 +1,14 @@
 // Demo data, so a fresh checkout has something to look at.
 //
 // An empty directory makes both the search and the random match look broken,
-// which is a poor first impression for something meant to be browsed. These ten
-// members form five reciprocal pairs — each one can teach what their partner
-// wants to learn — so the directory reads as a swap network rather than a list.
+// which is a poor first impression for something meant to be browsed. These
+// twelve members form six reciprocal pairs — each one can teach what their
+// partner wants to learn — so the directory reads as a swap network rather than
+// a list.
+//
+// The count is quoted back to a reader in three places: the login page's demo
+// offer, scripts/vercel-build.js, and the README. Change it here and change it
+// there.
 //
 //   npm run seed            add the demo members, leaving anything else alone
 //   npm run seed -- --fresh drop every table first, then add them
@@ -87,6 +92,20 @@ var MEMBERS = [
     city: "New York", zipCode: "10001",
     teachSkill: "Piano", learnSkill: "Project Management",
     bio: "Classically trained, but I will teach you whatever you actually want to play. Terrible at keeping my own students' schedules straight."
+  },
+  {
+    email: "amara@example.com",
+    firstName: "Amara", lastName: "Njoroge",
+    city: "Nairobi", zipCode: "00100",
+    teachSkill: "Mathematics", learnSkill: "Skateboarding",
+    bio: "Secondary school maths teacher. I am very good at finding the exact place someone got lost, which is usually four topics before the one they asked about."
+  },
+  {
+    email: "hana@example.com",
+    firstName: "Hana", lastName: "Sato",
+    city: "Osaka", zipCode: "530-0001",
+    teachSkill: "Skateboarding", learnSkill: "Mathematics",
+    bio: "Fifteen years on a board and still learning. I can get you rolling and stopping on purpose in an afternoon. Going back to the maths I gave up on at school."
   }
 ];
 

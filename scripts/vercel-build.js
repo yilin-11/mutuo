@@ -24,7 +24,7 @@ if (!process.env.DATABASE_URL) {
 
 if (process.env.MUTUO_DEMO_SEED !== "true") {
   console.log("MUTUO_DEMO_SEED is not \"true\" — skipping the demo seed.");
-  console.log("Set it to \"true\" to put the ten demo members in the directory.");
+  console.log("Set it to \"true\" to put the twelve demo members in the directory.");
   process.exit(0);
 }
 
