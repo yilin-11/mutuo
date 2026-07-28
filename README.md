@@ -11,22 +11,36 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
 [![CI](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml/badge.svg)](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml)
 
-**[Live demo](https://mutuo-gamma.vercel.app/)** — log in as `ada@example.com`
-with the password `swap-skills-demo`, or sign up for a fresh account. The demo
-runs on a free tier, so the first request after an idle spell waits on a cold
-start.
+**[Live demo](https://mutuo-demo.vercel.app/)** · Run it locally in three
+commands — see [Getting started](#getting-started). Either way the database is
+seeded with ten members, so the directory has something in it on first load.
 
-Run it locally in three commands — see [Getting started](#getting-started). The
-seeded database ships with ten members, so the directory has something in it on
-first load.
+The directory, mid-search. Every card carries the skill a member teaches and the
+one they want; the two below are a reciprocal pair, which is what the seed data
+is built to show.
 
-<!-- Three screenshots carry this README. Take them at 1280px wide against a
-     seeded database, save them under docs/, and swap the placeholders in:
-       1. the member directory, mid-search, with results filtered
-       2. a profile detail page with the map rendered
-       3. the random-match page having dealt a card
--->
-![The member directory](docs/directory.png)
+![The member directory, filtered by a search for Piano](docs/directory.png)
+
+A profile. The map places a member by postal code and never more precisely than a
+circle, so a directory of strangers does not double as a list of addresses.
+
+![A member's profile, with a map of roughly where they are based](docs/profile.png)
+
+And when nobody in particular stands out, Mutuo deals you someone.
+
+![The random match page, having dealt a member](docs/match.png)
+
+Nothing above is visible without a session — the directory is full of people, and
+`/api/profiles` is behind the same guard as the page that draws it. So the demo
+offers an account rather than opening the directory up: `ada@example.com`,
+password `swap-skills-demo`, and a button that fills the form in. The offer
+appears only where `MUTUO_DEMO_SEED` is set, so a deployment with real members in
+it never publishes a password.
+
+![The login page, offering a demo account](docs/login.png)
+
+The demo runs on a free tier, so the first request after an idle spell waits on a
+cold start.
 
 ---
 
@@ -168,7 +182,7 @@ change anything.
 | `DB_SSL`          | `false`                | Set `true` for managed Postgres, which requires TLS  |
 | `SQL_LOG`         | `false`                | Log every SQL statement                              |
 | `MUTUO_CONTACT`   | placeholder            | Contact string sent to the geocoder — set your own before deploying |
-| `MUTUO_DEMO_SEED` | `false`                | Lets the demo seed run under `NODE_ENV=production` — see [Deployment](#vercel--where-the-live-demo-runs) |
+| `MUTUO_DEMO_SEED` | `false`                | Lets the demo seed run under `NODE_ENV=production`, and puts the demo account on the login page — see [Deployment](#vercel--where-the-live-demo-runs) |
 
 In development a session secret is generated at boot, so sessions end when the
 server restarts. That is deliberate: it means no placeholder secret is committed
@@ -197,6 +211,7 @@ DATABASE_URL=postgres://user:password@localhost:5432/mutuo DB_DIALECT=postgres n
 | PUT    | `/api/profiles/me`   | yes  | Same as above                            |
 | GET    | `/api/profiles/:id`  | yes  | One profile, `404` if unknown            |
 | GET    | `/api/geocode?zip=`  | yes  | Coordinates for a postal code            |
+| GET    | `/api/demo`          | —    | The demo account to offer, or `null`     |
 
 A profile always belongs to whoever is logged in — the owner comes from the
 session, never from the request body.
@@ -255,8 +270,14 @@ so explicitly rather than the check being weakened for everybody. Seeding stays
 additive even then: `--fresh` drops tables and is refused in production
 regardless.
 
-Deploying without `MUTUO_DEMO_SEED` is fine — the build skips the seed and the
-app comes up with an empty directory.
+The same variable decides whether the login page offers that account to a
+visitor (`config/demo.js`, served by `GET /api/demo`). The two are one switch on
+purpose: the page must not advertise an account the database was never given, and
+a deployment with real members must not publish a working password next to their
+addresses.
+
+Deploying without `MUTUO_DEMO_SEED` is fine — the build skips the seed, the login
+page offers nothing, and the app comes up with an empty directory.
 
 ### Render, or any container host
 
