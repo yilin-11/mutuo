@@ -11,3 +11,7 @@
 # OS / editor cruft
 .DS_Store
 npm-debug.log*
+
+# Vercel CLI link metadata
+.vercel
+.env*
