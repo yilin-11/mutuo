@@ -79,7 +79,7 @@
 .member-card:focus-visible {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(31, 111, 79, 0.12);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .member-card__head {

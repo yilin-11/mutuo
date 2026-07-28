@@ -7,6 +7,9 @@
   <title>Mutuo — trade skills with people near you</title>
   <meta name="description" content="Mutuo pairs people who want to teach a skill with people who want to learn one. Free, local, mutual.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- In head and not deferred: the stored theme must be on <html> before the
+       body paints. See public/js/theme.js. -->
+  <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/stylesheets/base.css">
   <link rel="stylesheet" href="/stylesheets/index.css">
 </head>
@@ -17,6 +20,15 @@
     <div class="nav-collapse">
       <ul class="nav-menu"></ul>
       <div class="nav-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg class="theme-icon theme-icon--sun" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="3.25" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M8 1v1.7M8 13.3V15M15 8h-1.7M2.7 8H1M12.95 3.05l-1.2 1.2M4.25 11.75l-1.2 1.2M12.95 12.95l-1.2-1.2M4.25 4.25l-1.2-1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <svg class="theme-icon theme-icon--moon" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M13.6 9.8A5.9 5.9 0 016.2 2.4 5.9 5.9 0 1013.6 9.8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </button>
         <a class="btn btn--ghost" href="/login">Log in</a>
         <a class="btn btn--secondary" href="/signup">Get started</a>
       </div>

@@ -13,7 +13,7 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
 **[Live demo](https://mutuo-demo.vercel.app/)** · Run it locally in three
 commands — see [Getting started](#getting-started). Either way the database is
-seeded with ten members, so the directory has something in it on first load.
+seeded with twelve members, so the directory has something in it on first load.
 
 The directory, mid-search. Every card carries the skill a member teaches and the
 one they want; the two below are a reciprocal pair, which is what the seed data
@@ -111,11 +111,12 @@ routes/
 views/                 One HTML file per page, served by html-routes
 public/                Everything served as-is by express.static
   js/                  common.js holds the shared helpers
+    theme.js           Applies the stored theme before the body paints
   stylesheets/
     base.css           Design tokens and every shared component
     <page>.css         Only what one page adds to them
 scripts/
-  seed.js              Ten demo members, five reciprocal teach/learn pairs
+  seed.js              Twelve demo members, six reciprocal teach/learn pairs
 test/
   api.test.js          End-to-end API tests
   rate-limit.test.js   The rate limiter on its own
@@ -134,6 +135,16 @@ spacing, radius and shadow, and one definition each for the button, input, nav
 and card. A page stylesheet only holds what that page adds. Nothing is fetched
 to render a page — no framework, no web font, no avatar service.
 
+**Dark is the default and light is opt-in.** The dark values sit unqualified on
+`:root`, so a first visit — and a visit with JavaScript turned off — gets dark
+rather than a flash of something else. Choosing light puts `data-theme="light"`
+on `<html>`, which swaps the same token names for their light values; no
+component knows which theme it is in. `js/theme.js` applies the stored choice
+and is loaded from `<head>` without `defer` on purpose, because the attribute
+has to be set before the body paints or the visitor sees the theme they did not
+pick. `prefers-color-scheme` is deliberately not consulted: dark is this app's
+default, not a guess at what the visitor's system wants.
+
 ## Getting started
 
 Requires Node 18 or newer. No database server needed — Mutuo uses SQLite by
@@ -141,7 +152,7 @@ default and creates the file on first run.
 
 ```bash
 npm install
-npm run seed     # ten demo members, so the directory is not empty
+npm run seed     # twelve demo members, so the directory is not empty
 npm start
 ```
 

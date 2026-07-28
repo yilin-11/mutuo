@@ -106,15 +106,42 @@
   z-index: 0;
 }
 
-/* Leaflet's own controls and attribution ship with sharp corners and a heavier
-   border than anything else on the page. */
+/* Leaflet's own controls and attribution ship with sharp corners, a heavier
+   border than anything else on the page, and a white background that stays
+   white whatever the theme is doing. */
 .leaflet-control-zoom a {
   border-radius: var(--radius-sm) !important;
+  background-color: var(--bg) !important;
+  border-color: var(--border) !important;
   color: var(--text) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: var(--bg-hover) !important;
 }
 
 .leaflet-container {
   font-family: var(--font);
+  background-color: var(--bg-sunken);
+}
+
+.leaflet-control-attribution {
+  background-color: var(--nav-bg) !important;
+  color: var(--text-muted) !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--text-muted) !important;
+}
+
+/* OpenStreetMap has no dark tiles, and a white map is the brightest thing on a
+   dark page by a wide margin. Inverting and rotating the hue back turns the
+   standard raster into a passable dark one — a well-worn trick, and the only
+   option that does not mean a second tile provider and a second attribution.
+   Only the tiles: the circle marking the member lives in the overlay pane and
+   would come out the wrong colour with them. */
+:root:not([data-theme="light"]) .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88);
 }
 
 @media (max-width: 640px) {

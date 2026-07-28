@@ -9,43 +9,17 @@
 
 /* ---------------------------------------------------------------- tokens -- */
 
+/* Dark is the default, so it lives on :root unqualified: a page with no stored
+   preference, and a page whose JavaScript never ran, both get the dark theme
+   rather than a flash of the other one. Light is opt-in — js/theme.js puts
+   data-theme="light" on <html> before the body paints. */
+
 :root {
-  /* Neutrals carry the whole interface. Near-black rather than black, and
-     greys warm enough not to read as blue against the accent. */
-  --bg: #ffffff;
-  --bg-sunken: #fbfbfa;
-  --bg-hover: #f6f6f5;
-  --bg-active: #f0f0ef;
-
-  --text: #1a1a19;
-  --text-muted: #6b6b68;
-  --text-subtle: #9a9a96;
-
-  /* Borders do the work shadows would otherwise be asked to do, so they are
-     the one thing allowed to be nearly invisible and still matter. */
-  --border: rgba(0, 0, 0, 0.09);
-  --border-strong: rgba(0, 0, 0, 0.16);
-
-  /* One accent, kept from the old palette so the app still reads as itself. */
-  --accent: #1f6f4f;
-  --accent-hover: #1a5c42;
-  --accent-tint: #edf5f1;
-  --accent-border: rgba(31, 111, 79, 0.22);
-
-  --danger: #b4342c;
-  --danger-tint: #fdf2f1;
-  --danger-border: rgba(180, 52, 44, 0.2);
-
+  /* Anything not listed per-theme below is shared, so it is only written once. */
   --radius-sm: 6px;
   --radius: 8px;
   --radius-lg: 12px;
   --radius-pill: 999px;
-
-  /* Shadows are for lift, not for drama: one hairline and one soft spread,
-     both under 8% black. Anything heavier looks dated next to a 1px border. */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
 
   --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
@@ -56,6 +30,118 @@
      it can say so rather than guessing. */
   --nav-height: 56px;
   --page-max: 1080px;
+
+  /* --- dark, the default --------------------------------------------------- */
+
+  /* Three greys rather than one: the page sits below the surfaces on it, which
+     is what makes a bordered card read as a card without a shadow that dark
+     backgrounds would swallow anyway. */
+  --bg-page: #0d0e10;
+  --bg: #17181b;
+  --bg-sunken: #101114;
+  --bg-hover: #1f2024;
+  --bg-active: #26272c;
+
+  --text: #ececed;
+  --text-muted: #a0a0a6;
+  --text-subtle: #6e6e75;
+
+  /* Light borders on dark need more of themselves than dark ones on light do,
+     or the card edge disappears. */
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* The light theme's #1f6f4f is unreadable on a dark background, so the accent
+     lightens rather than staying put. --accent-fg is what sits on top of it:
+     white on the dark green, near-black on the light one. */
+  --accent: #4cb98a;
+  --accent-hover: #62c79a;
+  --accent-fg: #08251a;
+  --accent-tint: rgba(76, 185, 138, 0.13);
+  --accent-border: rgba(76, 185, 138, 0.3);
+  --focus-ring: rgba(76, 185, 138, 0.22);
+
+  --danger: #f87d74;
+  --danger-tint: rgba(248, 125, 116, 0.11);
+  --danger-border: rgba(248, 125, 116, 0.28);
+
+  /* A translucent header over a dark page. */
+  --nav-bg: rgba(13, 14, 16, 0.78);
+
+  /* A tinted panel behind light text on dark, and the reverse on light. Muted
+     enough either way that twelve of them in a grid read as texture rather than
+     as confetti, which is what the old avatar service produced. */
+  --tone-1-bg: #172b22; --tone-1-fg: #7fc9a4;
+  --tone-2-bg: #1b2028; --tone-2-fg: #9fb0c6;
+  --tone-3-bg: #29231a; --tone-3-fg: #c9ab82;
+  --tone-4-bg: #232030; --tone-4-fg: #ada3cc;
+  --tone-5-bg: #17252a; --tone-5-fg: #8bb8c5;
+  --tone-6-bg: #2a1f1f; --tone-6-fg: #c99d9a;
+
+  /* Shadows are nearly invisible against dark surfaces, so they are deeper here
+     and the borders above carry more of the separation. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+
+}
+
+/* --- light, opt-in --------------------------------------------------------- */
+
+:root[data-theme="light"] {
+  /* Nothing sits below the page here: white is already the bottom, so the page
+     and the surfaces on it are the same colour and the border does the work. */
+  --bg-page: #ffffff;
+  --bg: #ffffff;
+  --bg-sunken: #fbfbfa;
+  --bg-hover: #f6f6f5;
+  --bg-active: #f0f0ef;
+
+  /* Near-black rather than black, and greys warm enough not to read as blue
+     against the accent. */
+  --text: #1a1a19;
+  --text-muted: #6b6b68;
+  --text-subtle: #9a9a96;
+
+  --border: rgba(0, 0, 0, 0.09);
+  --border-strong: rgba(0, 0, 0, 0.16);
+
+  --accent: #1f6f4f;
+  --accent-hover: #1a5c42;
+  --accent-fg: #ffffff;
+  --accent-tint: #edf5f1;
+  --accent-border: rgba(31, 111, 79, 0.22);
+  --focus-ring: rgba(31, 111, 79, 0.12);
+
+  --danger: #b4342c;
+  --danger-tint: #fdf2f1;
+  --danger-border: rgba(180, 52, 44, 0.2);
+
+  --nav-bg: rgba(255, 255, 255, 0.82);
+
+  --tone-1-bg: #eaf1ed; --tone-1-fg: #2f6f52;
+  --tone-2-bg: #eef0f4; --tone-2-fg: #4a5568;
+  --tone-3-bg: #f4efe8; --tone-3-fg: #7a6142;
+  --tone-4-bg: #f0eef4; --tone-4-fg: #5b5175;
+  --tone-5-bg: #e9f0f2; --tone-5-fg: #3d6470;
+  --tone-6-bg: #f4eeee; --tone-6-fg: #79504e;
+
+  /* Lift, not drama: one hairline and one soft spread, both under 8% black.
+     Anything heavier looks dated next to a 1px border. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+
+}
+
+/* Native controls — scrollbars, the caret, form widgets we have not styled —
+   follow this rather than staying light on a dark page. */
+:root {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ----------------------------------------------------------------- reset -- */
@@ -72,7 +158,9 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--bg);
+  /* The page, not a surface: in dark these differ, and a card drawn in --bg
+     needs something behind it to sit on. */
+  background-color: var(--bg-page);
   color: var(--text);
   font-family: var(--font);
   font-size: 15px;
@@ -162,7 +250,7 @@ textarea {
   align-items: center;
   gap: 24px;
   padding: 0 24px;
-  background-color: rgba(255, 255, 255, 0.82);
+  background-color: var(--nav-bg);
   /* Kept legible over whatever scrolls beneath it without going opaque. */
   backdrop-filter: saturate(180%) blur(12px);
   -webkit-backdrop-filter: saturate(180%) blur(12px);
@@ -243,6 +331,47 @@ textarea {
   cursor: pointer;
 }
 
+/* ----------------------------------------------------------- theme toggle -- */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-hover);
+  color: var(--text);
+}
+
+/* Each icon is the theme you would get by pressing the button, so only the
+   other one is ever on screen. Swapping them in CSS rather than in script means
+   the right one is showing on the first paint. */
+.theme-icon--sun { display: block; }
+.theme-icon--moon { display: none; }
+
+:root[data-theme="light"] .theme-icon--sun { display: none; }
+:root[data-theme="light"] .theme-icon--moon { display: block; }
+
+/* The auth pages have no nav to put it in, so it sits in the corner of the
+   viewport instead. */
+.theme-toggle--floating {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+}
+
 /* ------------------------------------------------------------- controls --- */
 
 .btn {
@@ -269,7 +398,7 @@ textarea {
 
 .btn--primary {
   background-color: var(--accent);
-  color: #fff;
+  color: var(--accent-fg);
   box-shadow: var(--shadow-sm);
 }
 
@@ -339,7 +468,7 @@ textarea {
   border-color: var(--accent);
   /* A ring rather than a browser outline, so focus is obvious without the
      control appearing to change size. */
-  box-shadow: 0 0 0 3px rgba(31, 111, 79, 0.12);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 textarea.input {
@@ -350,11 +479,17 @@ textarea.input {
 select.input {
   appearance: none;
   -webkit-appearance: none;
-  /* An inline chevron, so no icon font and no image request. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%236b6b68' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* An inline chevron, so no icon font and no image request. Its colour is
+     written into the data URI and a custom property cannot be interpolated into
+     one, so the two themes get a rule each rather than sharing a token. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%23a0a0a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
+}
+
+:root[data-theme="light"] select.input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%236b6b68' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .alert {
@@ -384,8 +519,6 @@ select.input {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  /* Muted enough that ten of them in a grid read as texture rather than as
-     confetti, which is what the old palette did. */
   background-color: var(--avatar-bg, var(--bg-active));
   color: var(--avatar-fg, var(--text-muted));
   user-select: none;
@@ -398,12 +531,14 @@ select.input {
   font-size: 20px;
 }
 
-.tone-1 { --avatar-bg: #eaf1ed; --avatar-fg: #2f6f52; }
-.tone-2 { --avatar-bg: #eef0f4; --avatar-fg: #4a5568; }
-.tone-3 { --avatar-bg: #f4efe8; --avatar-fg: #7a6142; }
-.tone-4 { --avatar-bg: #f0eef4; --avatar-fg: #5b5175; }
-.tone-5 { --avatar-bg: #e9f0f2; --avatar-fg: #3d6470; }
-.tone-6 { --avatar-bg: #f4eeee; --avatar-fg: #79504e; }
+/* Which tone a member gets is decided in js/common.js and is the same in both
+   themes; what each tone looks like is a pair of tokens above. */
+.tone-1 { --avatar-bg: var(--tone-1-bg); --avatar-fg: var(--tone-1-fg); }
+.tone-2 { --avatar-bg: var(--tone-2-bg); --avatar-fg: var(--tone-2-fg); }
+.tone-3 { --avatar-bg: var(--tone-3-bg); --avatar-fg: var(--tone-3-fg); }
+.tone-4 { --avatar-bg: var(--tone-4-bg); --avatar-fg: var(--tone-4-fg); }
+.tone-5 { --avatar-bg: var(--tone-5-bg); --avatar-fg: var(--tone-5-fg); }
+.tone-6 { --avatar-bg: var(--tone-6-bg); --avatar-fg: var(--tone-6-fg); }
 
 /* Skill pills. The two are deliberately unequal: what someone can teach is the
    offer, and it carries the accent; what they want is context, and stays
