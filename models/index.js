@@ -4,7 +4,6 @@ var fs = require("fs");
 var path = require("path");
 var Sequelize = require("sequelize");
 
-var basename = path.basename(__filename);
 var env = process.env.NODE_ENV || "development";
 var config = require(path.join(__dirname, "..", "config", "config.js"))[env];
 var db = {};
@@ -18,14 +17,20 @@ var sequelize = config.use_env_variable
   ? new Sequelize(process.env[config.use_env_variable], config)
   : new Sequelize(config.database, config.username, config.password, config);
 
-fs.readdirSync(__dirname)
-  .filter(function(file) {
-    return file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js";
-  })
-  .forEach(function(file) {
-    var model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+// Listed explicitly rather than discovered by reading this directory.
+//
+// A bundler that decides what to ship by tracing require() calls — Vercel's
+// does — cannot see a directory read, so with fs.readdirSync(__dirname) here the
+// model files were liable to be left out of the deployment altogether. That
+// fails late and confusingly: the app boots, and the first query dies on
+// db.User being undefined.
+[
+  require("./user"),
+  require("./profile")
+].forEach(function(define) {
+  var model = define(sequelize, Sequelize.DataTypes);
+  db[model.name] = model;
+});
 
 Object.keys(db).forEach(function(modelName) {
   if (db[modelName].associate) {

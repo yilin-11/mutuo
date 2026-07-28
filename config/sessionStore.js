@@ -52,6 +52,15 @@ function sessionStore(session) {
   // the schema; this one belongs to the store, which owns its own shape.
   lastSync = store.sync();
 
+  // This starts the moment the app is imported, but config/ready.js only awaits
+  // it after the schema sync succeeds. When the database is unreachable both
+  // fail, ready() rejects on the first, and this one is left with no handler —
+  // an unhandled rejection, which Node treats as fatal. That killed the process
+  // before the request it was failing could be answered. Attaching a no-op
+  // marks it handled without settling it, so ready() still sees the rejection
+  // if it gets that far.
+  lastSync.catch(function() {});
+
   return store;
 }
 

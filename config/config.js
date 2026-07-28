@@ -24,12 +24,17 @@ function sqlite(file) {
 // instance's /tmp and be invisible to the next. Say so plainly rather than
 // letting it surface later as an opaque write error on somebody's first signup.
 if (process.env.VERCEL && !process.env.DATABASE_URL) {
-  throw new Error(
+  var noUrl = new Error(
     "DATABASE_URL must be set when running on Vercel — the filesystem is not " +
     "writable, so the SQLite fallback cannot be used. Attach a Postgres " +
     "database and set DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true. " +
     "See .env.example."
   );
+  // Marks this as our own message about how the app is configured, rather than
+  // an error from a driver. api/index.js will show it to a visitor; see there
+  // for why that distinction has to exist.
+  noUrl.mutuoConfig = true;
+  throw noUrl;
 }
 
 // A managed database (Heroku, Render, RDS, ...) hands us a single URL.

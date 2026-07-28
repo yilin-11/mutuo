@@ -31,7 +31,10 @@ app.use(express.static(path.join(__dirname, "public")));
 var sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
   if (isProduction) {
-    throw new Error("SESSION_SECRET must be set in production. See .env.example.");
+    var noSecret = new Error("SESSION_SECRET must be set in production. See .env.example.");
+    // See config/config.js — safe to show to a visitor, unlike a driver error.
+    noSecret.mutuoConfig = true;
+    throw noSecret;
   }
   sessionSecret = crypto.randomBytes(32).toString("hex");
 }
