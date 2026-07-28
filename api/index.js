@@ -20,6 +20,19 @@ function load() {
   }
 }
 
+// Named in the generic message below. Just the dialect — no host, no
+// credentials — because "could not be reached" while speaking the wrong protocol
+// to a perfectly healthy database is otherwise indistinguishable from a database
+// that is genuinely down.
+function dialectInUse() {
+  try {
+    var config = require("../config/config")[process.env.NODE_ENV || "development"];
+    return (config && config.dialect) || "unknown";
+  } catch (err) {
+    return "unknown";
+  }
+}
+
 function unavailable(res, err, context) {
   console.error(context);
   console.error(err);
@@ -33,7 +46,8 @@ function unavailable(res, err, context) {
   // response is public.
   res.end(err && err.mutuoConfig
     ? "Mutuo is misconfigured: " + err.message
-    : "Mutuo is unavailable: its database could not be reached.");
+    : "Mutuo is unavailable: its database could not be reached (dialect: " +
+      dialectInUse() + ").");
 }
 
 module.exports = function handler(req, res) {

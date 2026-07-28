@@ -32,5 +32,37 @@ module.exports = function problems() {
     );
   }
 
+  // A dialect that does not match the URL fails as a connection error, which
+  // reads as "the database is down" and sends you looking in the wrong place.
+  // config/config.js defaults DB_DIALECT to mysql, so pointing DATABASE_URL at
+  // Postgres and forgetting DB_DIALECT means talking MySQL to a Postgres server.
+  var url = process.env.DATABASE_URL;
+  if (url) {
+    var scheme = String(url).split(":")[0].toLowerCase();
+    var wanted = scheme === "postgresql" ? "postgres" : scheme;
+
+    if (wanted === "postgres" || wanted === "mysql") {
+      var dialect = process.env.DB_DIALECT;
+      if (!dialect) {
+        found.push(
+          "DB_DIALECT is not set, so it defaults to mysql, but DATABASE_URL is " +
+          "a " + wanted + " URL. Set DB_DIALECT=" + wanted + "."
+        );
+      } else if (dialect !== wanted) {
+        found.push(
+          "DB_DIALECT is \"" + dialect + "\" but DATABASE_URL is a " + wanted +
+          " URL. Set DB_DIALECT=" + wanted + "."
+        );
+      }
+    }
+
+    // Every managed Postgres reachable from a deployment insists on TLS and
+    // presents a certificate Node does not ship an authority for. Without
+    // DB_SSL the connection is refused outright.
+    if (process.env.VERCEL && wanted === "postgres" && process.env.DB_SSL !== "true") {
+      found.push("DB_SSL is not \"true\", which managed Postgres requires. Set DB_SSL=true.");
+    }
+  }
+
   return found;
 };
