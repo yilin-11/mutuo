@@ -19,6 +19,29 @@ function sqlite(file) {
   return Object.assign({ dialect: "sqlite", storage: file }, shared);
 }
 
+// Sequelize reaches for its driver with require(<dialect name>) — a call whose
+// argument is a variable, so a bundler tracing this project to decide what to
+// upload cannot see it and leaves the driver behind. What arrives is a
+// deployment that fails with "Please install pg package manually", which reads
+// as a broken install rather than as a file that never got packed. The require
+// below is a literal the trace can follow, and handing Sequelize the module
+// itself means it never runs the dynamic one. Same shape as the sqlite3 problem
+// described in config/requirements.js.
+//
+// pg is an optional dependency, hence the catch: an install without it is fine
+// as long as nothing asks for Postgres, and config/requirements.js says so
+// plainly when something does.
+function driverFor(dialect) {
+  if (dialect !== "postgres") {
+    return null;
+  }
+  try {
+    return require("pg");
+  } catch (err) {
+    return null;
+  }
+}
+
 // A serverless deployment has no writable disk, so the SQLite fallback below
 // cannot work there. That is reported by config/requirements.js rather than
 // thrown from here — see the comment in that file for why a throw during module
@@ -40,6 +63,11 @@ function fromUrl() {
     options.dialectOptions = {
       ssl: { require: true, rejectUnauthorized: false }
     };
+  }
+
+  var driver = driverFor(options.dialect);
+  if (driver) {
+    options.dialectModule = driver;
   }
 
   return Object.assign(options, shared);
