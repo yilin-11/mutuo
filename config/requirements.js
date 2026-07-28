@@ -1,28 +1,57 @@
-// Environment variables the app cannot serve without — collected, not thrown.
+// Environment problems the app cannot serve through — collected, not thrown.
 //
 // Throwing while a module loads looks like the direct way to refuse a
 // misconfigured deployment, and on a long-lived process it is: server.js never
-// reaches app.listen(). On Vercel it was actively counterproductive. The runtime
+// reaches app.listen(). On a serverless one it was counterproductive. The runtime
 // eagerly loads the entry point's module graph at boot to warm a bytecode cache,
 // so the throw happened before any request had a handler to be answered by, and
-// took the process down with it — the visitor got Vercel's generic
-// FUNCTION_INVOCATION_FAILED, and the reason existed only in the logs. Requiring
-// the app lazily inside a try/catch did not help, because the eager load happens
+// took the process down with it — the visitor got the platform's generic
+// invocation-failed page, and the reason existed only in the logs. Requiring the
+// app lazily inside a try/catch did not help, because the eager load happens
 // outside the handler entirely.
 //
 // So nothing here throws. config/ready.js checks this before it lets a request
 // through, which refuses a misconfigured deployment just as firmly — every
 // request gets a 503 naming what is missing, and server.js still exits non-zero
 // rather than binding a port.
+var fs = require("fs");
+var path = require("path");
+
+// Whether the SQLite file could actually be created. models/index.js has already
+// tried to make this directory by the time anything calls in here, so its absence
+// means the attempt failed.
+function canWrite(dir) {
+  try {
+    fs.accessSync(dir, fs.constants.W_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function isLocal(host) {
+  return host === "localhost" || host === "127.0.0.1" || host === "::1";
+}
+
 module.exports = function problems() {
   var found = [];
+  var config = require("./config")[process.env.NODE_ENV || "development"];
 
-  if (process.env.VERCEL && !process.env.DATABASE_URL) {
-    found.push(
-      "DATABASE_URL is not set. The filesystem is not writable on Vercel, so " +
-      "the SQLite fallback cannot be used — attach a Postgres database and set " +
-      "DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true."
-    );
+  // Deliberately a test of the filesystem rather than a check for a platform
+  // variable. The first version of this looked for process.env.VERCEL, which a
+  // project can be configured not to expose — and when it is not exposed, the
+  // check silently never fires and the fallback to an unwritable SQLite file
+  // surfaces as "the database could not be reached" instead. Asking whether the
+  // file can be written answers the real question on any host.
+  if (config.dialect === "sqlite" && config.storage && config.storage !== ":memory:") {
+    if (!canWrite(path.dirname(config.storage))) {
+      found.push(
+        "DATABASE_URL is not set, so Mutuo fell back to SQLite at " +
+        config.storage + " — and that directory cannot be written, which is the " +
+        "case on any read-only or serverless filesystem. Attach a Postgres " +
+        "database and set DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true."
+      );
+    }
   }
 
   if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
@@ -56,11 +85,22 @@ module.exports = function problems() {
       }
     }
 
-    // Every managed Postgres reachable from a deployment insists on TLS and
-    // presents a certificate Node does not ship an authority for. Without
-    // DB_SSL the connection is refused outright.
-    if (process.env.VERCEL && wanted === "postgres" && process.env.DB_SSL !== "true") {
-      found.push("DB_SSL is not \"true\", which managed Postgres requires. Set DB_SSL=true.");
+    // Every managed Postgres insists on TLS and presents a certificate Node does
+    // not ship an authority for. Without DB_SSL the connection is refused
+    // outright. Only for a remote host: a Postgres on this machine is normally
+    // reached without it.
+    if (wanted === "postgres" && process.env.DB_SSL !== "true") {
+      var host = "";
+      try {
+        host = new URL(url).hostname;
+      } catch (err) {
+        host = "";
+      }
+      if (host && !isLocal(host)) {
+        found.push(
+          "DB_SSL is not \"true\", which managed Postgres requires. Set DB_SSL=true."
+        );
+      }
     }
   }
 
