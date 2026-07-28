@@ -29,11 +29,26 @@ function canWrite(dir) {
   }
 }
 
+// Whether a dialect's driver is actually usable here, rather than merely listed
+// as a dependency.
+function canLoad(name) {
+  try {
+    require(name);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+// The node package each dialect's connection manager loads. Sequelize names
+// these itself, in the message it throws when one is missing.
+var DRIVERS = { postgres: "pg", mysql: "mysql2" };
+
 function isLocal(host) {
   return host === "localhost" || host === "127.0.0.1" || host === "::1";
 }
 
-module.exports = function problems() {
+function problems() {
   var found = [];
   var config = require("./config")[process.env.NODE_ENV || "development"];
 
@@ -44,7 +59,18 @@ module.exports = function problems() {
   // surfaces as "the database could not be reached" instead. Asking whether the
   // file can be written answers the real question on any host.
   if (config.dialect === "sqlite" && config.storage && config.storage !== ":memory:") {
-    if (!canWrite(path.dirname(config.storage))) {
+    if (!canLoad("sqlite3")) {
+      // sqlite3 ships a native binary, and a bundler that traces require() calls
+      // to decide what to deploy does not reliably carry one. Sequelize's own
+      // report of this is "Please install sqlite3 package manually", thrown while
+      // its constructor runs, which reads as a broken install rather than as the
+      // real problem: on a deployment there should be a real database here.
+      found.push(
+        "DATABASE_URL is not set, so Mutuo fell back to SQLite — and the sqlite3 " +
+        "native module is not available in this deployment. Attach a Postgres " +
+        "database and set DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true."
+      );
+    } else if (!canWrite(path.dirname(config.storage))) {
       found.push(
         "DATABASE_URL is not set, so Mutuo fell back to SQLite at " +
         config.storage + " — and that directory cannot be written, which is the " +
@@ -85,6 +111,18 @@ module.exports = function problems() {
       }
     }
 
+    // A driver can be listed in package.json and still not be here — see the
+    // sqlite3 note above for how a deployment ends up without one. Checked
+    // against the URL rather than against config.dialect so the answer does not
+    // change with a mis-set DB_DIALECT, which the block above already reports.
+    var driver = DRIVERS[wanted];
+    if (driver && !canLoad(driver)) {
+      found.push(
+        "DATABASE_URL is a " + wanted + " URL, but the " + driver + " driver is " +
+        "not available in this deployment."
+      );
+    }
+
     // Every managed Postgres insists on TLS and presents a certificate Node does
     // not ship an authority for. Without DB_SSL the connection is refused
     // outright. Only for a remote host: a Postgres on this machine is normally
@@ -105,4 +143,19 @@ module.exports = function problems() {
   }
 
   return found;
+}
+
+module.exports = problems;
+
+// The same thing as an error, for the two callers that refuse to go on. Tagged
+// mutuoConfig so api/index.js knows the message is ours and safe to show a
+// visitor, unlike anything a driver produces — see the comment there.
+module.exports.asError = function() {
+  var found = problems();
+  if (!found.length) {
+    return null;
+  }
+  var err = new Error(found.join(" "));
+  err.mutuoConfig = true;
+  return err;
 };

@@ -21,13 +21,8 @@ module.exports = function ready() {
     // would otherwise fail here as a driver error rather than as the
     // configuration mistake it is.
     .then(function() {
-      var found = problems();
-      if (found.length) {
-        var err = new Error(found.join(" "));
-        // Our own message about how the app is configured, rather than anything
-        // from a driver — api/index.js will quote it to a visitor. See there for
-        // why that distinction has to exist.
-        err.mutuoConfig = true;
+      var err = problems.asError();
+      if (err) {
         throw err;
       }
       return db.sequelize.sync();

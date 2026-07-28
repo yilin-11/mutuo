@@ -15,6 +15,16 @@ var ready = null;
 // to the logs to find out. Loading here means the reason can be answered with.
 function load() {
   if (!app) {
+    // Before the app, because requiring it constructs a Sequelize instance, and
+    // that constructor throws for a dialect whose driver is missing — "Please
+    // install sqlite3 package manually" — which is what a deployment with no
+    // DATABASE_URL hits. ready() checks this too, but it only runs after the
+    // module graph has loaded, by which point that throw has already happened
+    // and the honest explanation has been replaced by a confusing one.
+    var err = require("../config/requirements").asError();
+    if (err) {
+      throw err;
+    }
     ready = require("../config/ready");
     app = require("../app");
   }
