@@ -9,12 +9,15 @@ a random member to reach out to.
 
 Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
-<!-- Replace both once the repository is on GitHub and the app is deployed.
-     The CI badge only renders after the first workflow run. -->
 [![CI](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml/badge.svg)](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml)
 
-**[Live demo](https://YOUR-APP.onrender.com)** — log in as `ada@example.com`
-with the password `swap-skills-demo`, or sign up for a fresh account.
+<!-- Once deployed, replace this line with:
+     **[Live demo](https://your-app.onrender.com)** — log in as `ada@example.com`
+     with the password `swap-skills-demo`, or sign up for a fresh account. -->
+
+Run it locally in three commands — see [Getting started](#getting-started). The
+seeded database ships with ten members, so the directory has something in it on
+first load.
 
 <!-- Three screenshots carry this README. Take them at 1280px wide against a
      seeded database, save them under docs/, and swap the placeholders in:
