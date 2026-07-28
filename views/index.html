@@ -6,23 +6,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mutuo — trade skills with people near you</title>
   <meta name="description" content="Mutuo pairs people who want to teach a skill with people who want to learn one. Free, local, mutual.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/stylesheets/base.css">
   <link rel="stylesheet" href="/stylesheets/index.css">
 </head>
 
 <body>
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">Mutuo</h1>
-      <p class="hero-subtitle">Learn together, teach together.</p>
-      <p class="hero-tagline">
-        Offer a skill you know. Ask for one you don't. Find someone nearby to trade with — free.
-      </p>
-      <div class="hero-actions">
-        <a href="/signup" class="hero-button hero-button--primary">Get started</a>
-        <a href="/login" class="hero-button">I already have an account</a>
+  <header class="nav">
+    <a class="nav-brand" href="/">Mutuo</a>
+    <div class="nav-collapse">
+      <ul class="nav-menu"></ul>
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="/login">Log in</a>
+        <a class="btn btn--secondary" href="/signup">Get started</a>
       </div>
     </div>
-  </section>
+  </header>
+
+  <main class="hero">
+    <p class="hero-eyebrow">Skill swapping, near you</p>
+    <h1 class="hero-title">Learn together,<br>teach together.</h1>
+    <p class="hero-lede">
+      Offer a skill you know. Ask for one you don't. Mutuo pairs you with someone
+      nearby who wants the trade the other way round — free.
+    </p>
+    <div class="hero-actions">
+      <a href="/signup" class="btn btn--primary btn--lg">Get started</a>
+      <a href="/login" class="btn btn--secondary btn--lg">I already have an account</a>
+    </div>
+
+    <!-- Three steps, because "swap a skill" is a simple idea that still needs
+         saying once. Static markup: there is nothing here to fetch. -->
+    <ol class="steps">
+      <li class="step">
+        <span class="step-index">1</span>
+        <h2 class="step-title">List what you can teach</h2>
+        <p class="step-body">One skill you are happy to share, and one you would like to pick up.</p>
+      </li>
+      <li class="step">
+        <span class="step-index">2</span>
+        <h2 class="step-title">Find the other half</h2>
+        <p class="step-body">Search by skill, city or postcode — or let Mutuo deal you someone at random.</p>
+      </li>
+      <li class="step">
+        <span class="step-index">3</span>
+        <h2 class="step-title">Get in touch</h2>
+        <p class="step-body">Members share an email and roughly where they are. The rest is up to you.</p>
+      </li>
+    </ol>
+  </main>
 </body>
 
 </html>

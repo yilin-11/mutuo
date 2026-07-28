@@ -1,102 +1,160 @@
-/* Member directory. */
-.background {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 85% 10%, rgba(216, 166, 87, 0.18), transparent 55%),
-    linear-gradient(170deg, #f6f7f5, #e7ece8);
-  box-shadow: inset 0 0 100px hsla(0, 0%, 0%, 0.06);
-  padding-bottom: 3rem;
-}
+/* The member directory, and the card that also appears on the random-match
+   page. Both pages load this file; only this one lays out the grid.
 
-#member_cards {
-  width: 100%;
-  display: grid;
-  /* Was `auto auto auto`, which forced three columns at every width and
-     overflowed the page on a phone. */
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-  gap: 1.875rem;
-  margin: 0.625rem;
-}
+   The card used to be a white rounded box with a brightly coloured avatar, two
+   tags in two different colours, and a full-width black "Read More" button. The
+   button is gone — the card is the link — and the two skills are labelled
+   rather than left for the reader to infer from colour. */
 
-.portfolioContent {
-  height: 100%;
-  padding: 1.5rem 1.25rem;
-  text-align: center;
-  border-radius: 15px 50px;
-  background-color: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+/* ----------------------------------------------------------- nav search --- */
+
+.nav-search {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 8px;
 }
 
-.avatarImg {
-  display: block;
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 0.75rem;
-  border-radius: 50%;
-  background-color: #eef1ee;
+.nav-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-subtle);
+  pointer-events: none;
 }
 
-.portfolioTitle {
-  font-size: 1.4rem;
-  margin-bottom: 0.35rem;
+.nav-search-input {
+  width: 260px;
+  padding-left: 30px;
+  background-color: var(--bg-sunken);
 }
 
-.cardCategory {
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: rgb(122, 139, 164);
-  margin-bottom: 0.75rem;
+.nav-search-input:focus {
+  background-color: var(--bg);
 }
 
-/* Renamed from `.tags` / `.tages` — the second was a typo that had to be
-   repeated in the JavaScript to keep the styling working. */
-.tag-teach,
-.tag-learn {
-  display: inline-block;
-  padding: 0.3rem 0.6rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  color: #fff;
-  border-radius: 3px;
+/* Safari draws its own clear button inside a type=search, at a size and weight
+   nothing else on the page uses. */
+.nav-search-input::-webkit-search-decoration,
+.nav-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
 }
 
-.tag-teach {
-  background-color: #2f6f4f;
+/* -------------------------------------------------------------- the grid -- */
+
+.member-grid {
+  display: grid;
+  /* Column count follows the width rather than a breakpoint, so the directory
+     fills a wide window without a rule for each size of one. */
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 16px;
 }
 
-.tag-learn {
-  background-color: rgb(114, 179, 194);
-}
-
-.emailTag {
-  display: block;
-  width: 100%;
-  margin: 0.25rem auto 0.75rem;
-  font-size: 0.9rem;
-  color: #6c757d;
-  word-break: break-word;
-}
-
-.btn-block {
-  margin-top: auto;
-  width: 80%;
-  background-color: #212529;
-  color: #fff;
-}
-
-.btn-block:hover {
-  background-color: transparent;
-  color: #000;
-}
-
-.no-results {
+/* The empty and loading states are single messages rather than cards, so they
+   take the whole row instead of sitting in the first column. */
+.member-grid .empty-state {
   grid-column: 1 / -1;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: #6c757d;
-  font-size: 1.1rem;
+}
+
+/* -------------------------------------------------------------- the card -- */
+
+.member-card {
+  display: block;
+  padding: 18px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease,
+    transform 0.14s ease;
+}
+
+.member-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  /* One pixel. Enough to register as a response to the cursor without the card
+     appearing to jump out of the grid. */
+  transform: translateY(-1px);
+}
+
+.member-card:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(31, 111, 79, 0.12);
+}
+
+.member-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.member-card__identity {
+  min-width: 0;
+}
+
+.member-card__name {
+  font-size: 15px;
+  /* Long names truncate rather than wrapping to a second line and making one
+     card taller than the rest of its row. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-card__place {
+  font-size: 13px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Label and value per row: the same shape the profile page uses, so the trade
+   reads the same way in both places. */
+.member-card__skills {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 0 0 16px;
+}
+
+.member-card__skills dt {
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.member-card__skills dd {
+  margin: 0;
+  min-width: 0;
+}
+
+/* A pill hugs its label — inline-block rather than the grid item's full width,
+   which would draw a tinted bar the length of the card and lose the shape
+   entirely. It still has to be able to lose its tail rather than push the card
+   wider: "Project Management" is longer than the space it gets. */
+.member-card__skills .pill {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.member-card__email {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .nav-search,
+  .nav-search-input {
+    width: 100%;
+  }
 }

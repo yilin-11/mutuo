@@ -5,48 +5,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Random match · Mutuo</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/stylesheets/base.css">
+  <!-- The member card itself is defined once, in members.css. -->
+  <link rel="stylesheet" href="/stylesheets/members.css">
   <link rel="stylesheet" href="/stylesheets/game.css">
 </head>
 
 <body>
-  <div class="background">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="/members">Mutuo</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/members">Members</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/application">My profile</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="/game">Random match <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-        <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
-      </div>
-    </nav>
-
-    <div class="container">
-      <div class="match-intro text-center">
-        <h1 class="match-heading">Not sure who to ask?</h1>
-        <p class="match-lede">Let Mutuo pick a member for you.</p>
-        <form id="match-form">
-          <button id="randomBtn" class="btn btn-outline-dark btn-lg" type="submit">Match me with someone</button>
-        </form>
-        <p id="match-status" class="match-status" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="row justify-content-center">
-        <div id="member_cards"></div>
+  <header class="nav">
+    <a class="nav-brand" href="/members">Mutuo</a>
+    <button class="nav-toggle" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="nav-collapse" id="mainNav">
+      <ul class="nav-menu">
+        <li><a class="nav-link" href="/members">Members</a></li>
+        <li><a class="nav-link" href="/application">My profile</a></li>
+        <li><a class="nav-link" href="/game" aria-current="page">Random match</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="/logout">Log out</a>
       </div>
     </div>
-  </div>
+  </header>
+
+  <main class="page page--narrow match">
+    <h1 class="match-heading">Not sure who to ask?</h1>
+    <p class="match-lede">Let Mutuo pick a member for you.</p>
+
+    <form id="match-form">
+      <button id="randomBtn" class="btn btn--primary btn--lg" type="submit">Match me with someone</button>
+    </form>
+
+    <p id="match-status" class="match-status" role="status" aria-live="polite"></p>
+
+    <div id="member_cards" class="match-result"></div>
+  </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="/js/common.js"></script>

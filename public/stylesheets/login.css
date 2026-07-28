@@ -1,16 +1,13 @@
 /* Shared by the log in and sign up pages.
-   The card classes used to be `.modal` and `.card`, which are both real
-   Bootstrap components — the page only looked right because this file happened
-   to load afterwards and undo Bootstrap's `display: none`. They have their own
-   names now so nothing is fighting the framework. */
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Varela Round", "Segoe UI", Roboto, sans-serif;
-  /* Was a cdn.glitch.com photo that no longer resolves. */
-  background:
-    radial-gradient(circle at 15% 25%, rgba(216, 166, 87, 0.28), transparent 55%),
-    linear-gradient(160deg, #123a2c, #0b241b 70%);
+
+   Previously a translucent card floating on a dark green gradient, with a
+   backdrop blur and a script wordmark. Now the plainest possible version of the
+   same thing: one bordered card, centred on a barely-there background, with the
+   fields given room. Everything structural — .input, .field, .btn — comes from
+   base.css, so what is left here is the shell and the demo offer. */
+
+.auth-page {
+  background-color: var(--bg-sunken);
 }
 
 .auth-shell {
@@ -18,140 +15,110 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 40px 20px;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 26rem;
-  padding: 2.5rem 2rem;
-  background-color: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  backdrop-filter: blur(6px);
+  max-width: 400px;
+  padding: 32px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
+/* Takes the accent square from .nav-brand, and centres the pair. Overriding
+   the display matters: .nav-brand is inline-flex, which shrinks to its content,
+   so justify-content would have had nothing spare to centre it in. */
 .auth-brand {
-  display: block;
-  text-align: center;
-  font-family: "Lobster", cursive;
-  font-size: 2rem;
-  color: #d8a657;
-  text-decoration: none;
-  margin-bottom: 0.25rem;
-}
-
-.auth-brand:hover {
-  color: #e9be7c;
-  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 22px;
 }
 
 .auth-title {
-  font-size: 1.35rem;
+  font-size: 20px;
   text-align: center;
-  color: #fff;
-  margin-bottom: 1.75rem;
+  margin-bottom: 4px;
 }
 
-.auth-card label {
-  display: inline-block;
-  margin-bottom: 0.35rem;
-  font-weight: 600;
-  color: #fff;
+.auth-lede {
+  margin-bottom: 26px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-.auth-card .form-control {
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 4px 4px 0 0;
-  /* The old rule set the input colour to rgba(0,0,0,0.4) on a dark card, so
-     what you typed was very nearly invisible. */
-  color: #fff;
-  padding: 0.5rem 0.65rem;
+.auth-switch {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-.auth-card .form-control:focus {
-  background-color: rgba(255, 255, 255, 0.14);
-  border-bottom-color: #d8a657;
-  box-shadow: none;
-  color: #fff;
+.auth-switch a {
+  color: var(--accent);
+  font-weight: 500;
 }
 
-.auth-card .form-control::placeholder {
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.5px;
+.auth-switch a:hover {
+  text-decoration: underline;
 }
 
-.auth-card .btn-light {
-  margin-top: 0.5rem;
-  font-weight: 600;
-}
+/* ------------------------------------------------------------ demo offer -- */
 
-/* The demo account offer. Set apart from the form by a rule and a lighter
-   panel, so it reads as an aside for a visitor who is only looking rather than
-   as another field to fill in. Hidden in the markup and revealed by login.js
-   only when the server says this is a demo. */
+/* Set apart from the form by a rule, so it reads as an aside for a visitor who
+   is only looking rather than as more fields to fill in. Hidden in the markup
+   and revealed by login.js only when the server says this is a demo. */
 .demo-hint {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
 }
 
 .demo-hint-lead {
-  margin-bottom: 0.35rem;
+  margin-bottom: 4px;
+  font-size: 14px;
   font-weight: 600;
-  color: #d8a657;
 }
 
 .demo-hint-body {
-  margin-bottom: 0.85rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
 }
 
-/* A labelled pair per row rather than a sentence, because both halves are
-   meant to be read off the screen and typed somewhere else — and a sentence
-   puts its full stop right up against the password. */
+/* A labelled pair per row rather than a sentence, because both halves are meant
+   to be read off the screen and typed somewhere else — and a sentence puts its
+   full stop right up against the password. */
 .demo-creds {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.35rem 0.75rem;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
+  gap: 6px 12px;
+  align-items: center;
+  margin: 0 0 16px;
+  font-size: 13px;
 }
 
 .demo-creds dt {
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-subtle);
 }
 
 .demo-creds dd {
   margin: 0;
 }
 
-.demo-hint code {
-  padding: 0.1rem 0.3rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  /* Bootstrap's default is a pink that disappears against the green card. */
-  color: #fff;
+.demo-creds code {
+  padding: 2px 6px;
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
   /* The address and the password both have to survive being read off a screen
      and typed somewhere else. */
   white-space: nowrap;
-}
-
-.auth-switch {
-  margin: 1.5rem 0 0;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.auth-switch a {
-  color: #d8a657;
-}
-
-#form-alert {
-  font-size: 0.9rem;
 }

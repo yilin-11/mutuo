@@ -1,73 +1,133 @@
-/* A single member's profile. */
+/* A single member's profile.
 
-/* Replaces the source.unsplash.com <img>, which now returns 503. */
-#hero-img {
-  height: 220px;
-  background:
-    radial-gradient(circle at 25% 30%, rgba(216, 166, 87, 0.5), transparent 55%),
-    linear-gradient(120deg, #2f6f4f, #123a2c);
+   The page used to open with a 220px gradient banner and an avatar overlapping
+   it, centred, with the two skills as coloured badges under the name. The
+   banner is gone: it was decoration standing between the reader and the one
+   thing they came for, which is who this person is and how to reach them. The
+   facts are a description list now, the same label-and-value shape the
+   directory card uses. */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 26px;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: color 0.12s ease;
 }
 
-.detailContainer {
-  max-width: 44rem;
-  padding-bottom: 2rem;
+.back-link:hover {
+  color: var(--text);
 }
 
-.img-avatar {
-  height: 120px;
-  width: 120px;
-  margin: -60px auto 1rem;
-  display: block;
-  border: 4px solid #fff;
-  background-color: #eef1ee;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
-.userName {
-  font-size: 1.9rem;
-  margin-bottom: 0.75rem;
+.profile-name {
+  font-size: 24px;
+  letter-spacing: -0.02em;
 }
 
-.skills .badge {
-  font-size: 0.9rem;
+.profile-place {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.profile-facts {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 0 0 28px;
+  padding: 20px 22px;
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.profile-facts dt {
+  font-size: 13px;
+  color: var(--text-subtle);
+}
+
+.profile-facts dd {
+  margin: 0;
+}
+
+/* The pills are filled in by JavaScript, and an empty one would otherwise show
+   as a stray tinted dot for as long as the request takes. */
+.profile-facts .pill:empty {
+  display: none;
+}
+
+.profile-email {
+  font-size: 14px;
+  color: var(--accent);
   font-weight: 500;
-  padding: 0.45rem 0.7rem;
-  margin: 0 0.2rem;
-  color: #fff;
 }
 
-.badge-teach {
-  background-color: #2f6f4f;
+.profile-email:hover {
+  text-decoration: underline;
 }
 
-.badge-learn {
-  background-color: rgb(114, 179, 194);
+.profile-bio {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  /* Prose wants a shorter measure than the container it sits in. */
+  max-width: 40em;
 }
 
-.contact-list {
-  margin-top: 1.5rem;
-  text-align: center;
-}
+/* ------------------------------------------------------------------ map --- */
 
-.contact-list li {
-  margin-bottom: 0.35rem;
-}
-
-#bio {
-  margin-top: 1rem;
-  line-height: 1.75;
-  white-space: pre-line;
+.map-section {
+  margin-top: 36px;
 }
 
 .map-caption {
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-subtle);
 }
 
 #mapid {
-  height: 400px;
-  width: 90%;
-  max-width: 60rem;
-  margin: 0 auto;
-  border-radius: 8px;
+  height: 320px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  /* Leaflet's tiles are square and would otherwise sit over the rounded
+     corners this container just asked for. */
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Leaflet's own controls and attribution ship with sharp corners and a heavier
+   border than anything else on the page. */
+.leaflet-control-zoom a {
+  border-radius: var(--radius-sm) !important;
+  color: var(--text) !important;
+}
+
+.leaflet-container {
+  font-family: var(--font);
+}
+
+@media (max-width: 640px) {
+  .profile-facts {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+
+  .profile-facts dd {
+    margin-bottom: 12px;
+  }
+
+  .profile-facts dd:last-child {
+    margin-bottom: 0;
+  }
 }

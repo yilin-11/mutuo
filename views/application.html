@@ -5,87 +5,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My profile · Mutuo</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/stylesheets/base.css">
   <link rel="stylesheet" href="/stylesheets/application.css">
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/members">Mutuo</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+  <header class="nav">
+    <a class="nav-brand" href="/members">Mutuo</a>
+    <button class="nav-toggle" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     </button>
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="/members">Members</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/application">My profile <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/game">Random match</a>
-        </li>
+    <div class="nav-collapse" id="mainNav">
+      <ul class="nav-menu">
+        <li><a class="nav-link" href="/members">Members</a></li>
+        <li><a class="nav-link" href="/application" aria-current="page">My profile</a></li>
+        <li><a class="nav-link" href="/game">Random match</a></li>
       </ul>
-      <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="/logout">Log out</a>
+      </div>
     </div>
-  </nav>
+  </header>
 
-  <div class="container profile-form-container">
-    <h1 id="form-title" class="text-center mt-4">Create your profile</h1>
-    <p class="text-center text-muted">
-      Tell other members what you can teach and what you'd like to learn.
-    </p>
+  <main class="page page--narrow">
+    <div class="page-header">
+      <h1 id="form-title" class="page-title">Create your profile</h1>
+      <p class="page-lede">
+        Tell other members what you can teach and what you'd like to learn.
+      </p>
+    </div>
 
     <!-- Filled in by application.js when the server rejects the submission. -->
-    <div id="form-alert" class="alert alert-danger" role="alert" style="display: none"></div>
+    <div id="form-alert" class="alert" role="alert" style="display: none"></div>
 
     <form id="profile-form" novalidate>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="firstName">First name</label>
-          <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" autocomplete="given-name" required>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="firstName">First name</label>
+          <input type="text" id="firstName" name="firstName" class="input" placeholder="Ada" autocomplete="given-name" required>
         </div>
-        <div class="form-group col-md-6">
-          <label for="lastName">Last name</label>
-          <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" autocomplete="family-name" required>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="city">City</label>
-          <input type="text" id="city" name="city" class="form-control" placeholder="Where are you based?" autocomplete="address-level2" required>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="zipCode">Postal code</label>
-          <input type="text" id="zipCode" name="zipCode" class="form-control" placeholder="Used to place you on the map" autocomplete="postal-code" required>
+        <div class="field">
+          <label class="field-label" for="lastName">Last name</label>
+          <input type="text" id="lastName" name="lastName" class="input" placeholder="Okonkwo" autocomplete="family-name" required>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="teachSkill">Which skill can you share?</label>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="city">City</label>
+          <input type="text" id="city" name="city" class="input" placeholder="Where are you based?" autocomplete="address-level2" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="zipCode">Postal code</label>
+          <input type="text" id="zipCode" name="zipCode" class="input" placeholder="Used to place you on the map" autocomplete="postal-code" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="teachSkill">Which skill can you share?</label>
           <!-- Both lists are populated from the shared list in common.js. -->
-          <select id="teachSkill" name="teachSkill" class="form-control" required></select>
+          <select id="teachSkill" name="teachSkill" class="input" required></select>
         </div>
-        <div class="form-group col-md-6">
-          <label for="learnSkill">Which skill do you want to learn?</label>
-          <select id="learnSkill" name="learnSkill" class="form-control" required></select>
+        <div class="field">
+          <label class="field-label" for="learnSkill">Which skill do you want to learn?</label>
+          <select id="learnSkill" name="learnSkill" class="input" required></select>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="bio">About you</label>
-        <textarea id="bio" name="bio" class="input-textarea form-control" rows="5" placeholder="Tell other members a little about yourself" maxlength="2000" required></textarea>
+      <div class="field">
+        <label class="field-label" for="bio">About you</label>
+        <textarea id="bio" name="bio" class="input" rows="5" placeholder="Tell other members a little about yourself" maxlength="2000" required></textarea>
       </div>
 
-      <div class="form-group text-center">
-        <button type="submit" id="submit" class="btn btn-outline-dark mr-3">Submit</button>
-        <a href="/members" class="btn btn-outline-secondary">Cancel</a>
+      <div class="form-actions">
+        <button type="submit" id="submit" class="btn btn--primary">Save profile</button>
+        <a href="/members" class="btn btn--ghost">Cancel</a>
       </div>
     </form>
-  </div>
+  </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="/js/common.js"></script>

@@ -5,32 +5,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Log in · Mutuo</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css?family=Lobster|Varela+Round&display=swap" rel="stylesheet">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/stylesheets/base.css">
   <link href="/stylesheets/login.css" rel="stylesheet">
 </head>
 
-<body>
-  <div class="auth-shell">
+<body class="auth-page">
+  <main class="auth-shell">
     <div class="auth-card">
-      <a class="auth-brand" href="/">Mutuo</a>
+      <a class="auth-brand nav-brand" href="/">Mutuo</a>
       <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-lede">Log in to browse the directory.</p>
 
       <form class="login" novalidate>
-        <div class="form-group">
-          <label for="email-input">Email address</label>
-          <input type="email" class="form-control" id="email-input" placeholder="you@example.com" autocomplete="email" required>
+        <div class="field">
+          <label class="field-label" for="email-input">Email address</label>
+          <input type="email" class="input" id="email-input" placeholder="you@example.com" autocomplete="email" required>
         </div>
 
-        <div class="form-group">
-          <label for="password-input">Password</label>
-          <input type="password" class="form-control" id="password-input" placeholder="Your password" autocomplete="current-password" required>
+        <div class="field">
+          <label class="field-label" for="password-input">Password</label>
+          <input type="password" class="input" id="password-input" placeholder="Your password" autocomplete="current-password" required>
         </div>
 
         <!-- Filled in by login.js when the server rejects the credentials. -->
-        <div id="form-alert" class="alert alert-danger" role="alert" style="display: none"></div>
+        <div id="form-alert" class="alert" role="alert" style="display: none"></div>
 
-        <button type="submit" class="btn btn-light btn-block">Log in</button>
+        <button type="submit" class="btn btn--primary btn--block">Log in</button>
       </form>
 
       <!-- Filled in and revealed by login.js, but only on a demo deployment:
@@ -48,14 +49,14 @@
           <dt>password</dt>
           <dd><code id="demo-password"></code></dd>
         </dl>
-        <button type="button" id="demo-fill" class="btn btn-outline-light btn-sm btn-block">
+        <button type="button" id="demo-fill" class="btn btn--secondary btn--block">
           Fill this in for me
         </button>
       </div>
 
       <p class="auth-switch">New here? <a href="/signup">Create an account</a></p>
     </div>
-  </div>
+  </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="/js/common.js"></script>

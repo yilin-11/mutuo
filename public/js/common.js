@@ -37,42 +37,73 @@ window.Mutuo = (function() {
       .replace(/'/g, "&#39;");
   }
 
-  // Generated initial-avatars. The old api.adorable.io service shut down and
-  // now redirects to a parked page, so every avatar on the site was broken.
-  function avatarUrl(profile) {
-    var seed = (profile.firstName || "") + " " + (profile.lastName || "");
-    return "https://api.dicebear.com/9.x/initials/svg?radius=50&seed=" +
-      encodeURIComponent(seed.trim() || "Mutuo");
+  // How many tones stylesheets/base.css defines as .tone-1 ... .tone-N.
+  var AVATAR_TONES = 6;
+
+  function initials(profile) {
+    var first = String(profile.firstName || "").trim().charAt(0);
+    var last = String(profile.lastName || "").trim().charAt(0);
+    return ((first + last).toUpperCase() || "?");
   }
 
-  // One member card. Every interpolated value is escaped.
+  // Which of the tones this member gets. Deterministic, so a face does not
+  // change colour between the directory and their own page — and derived from
+  // the name rather than the id, so it survives a reseeded database.
+  function avatarTone(profile) {
+    var seed = String(profile.firstName || "") + String(profile.lastName || "");
+    var sum = 0;
+    for (var i = 0; i < seed.length; i++) {
+      sum = (sum + seed.charCodeAt(i)) % 9973;
+    }
+    return (sum % AVATAR_TONES) + 1;
+  }
+
+  // Drawn here rather than fetched. Two avatar services have been through this
+  // file — adorable.io shut down and left every avatar broken, dicebear
+  // replaced it — and two letters in a circle are not worth a request to
+  // anyone, let alone a third party who then learns every member's name.
+  function avatar(profile, extraClass) {
+    return "<div class='avatar tone-" + avatarTone(profile) +
+      (extraClass ? " " + extraClass : "") + "' aria-hidden='true'>" +
+      escapeHtml(initials(profile)) + "</div>";
+  }
+
+  // One member card. The card itself is the link — a whole target rather than a
+  // button in the corner of one — and every interpolated value is escaped.
+  //
+  // The two skills are labelled rather than left to colour alone. The previous
+  // card put a green tag next to a blue one and expected the reader to work out
+  // which way round the trade went.
   function profileCard(profile) {
     return "" +
-      "<div class='portfolio-container' data-id='" + escapeHtml(profile.id) + "'>" +
-        "<div class='portfolio-card'>" +
-          "<div class='portfolioContent'>" +
-            "<img class='rounded-circle avatarImg' alt='' src='" + escapeHtml(avatarUrl(profile)) + "'>" +
-            "<h2 class='portfolioTitle'>" +
+      "<a class='member-card' data-id='" + escapeHtml(profile.id) + "' href='/detail/" +
+        encodeURIComponent(profile.id) + "'>" +
+        "<div class='member-card__head'>" +
+          avatar(profile) +
+          "<div class='member-card__identity'>" +
+            "<h2 class='member-card__name'>" +
               escapeHtml(profile.firstName) + " " + escapeHtml(profile.lastName) +
             "</h2>" +
-            "<p class='cardCategory'>" +
+            "<p class='member-card__place'>" +
               escapeHtml(profile.city) + " " + escapeHtml(profile.zipCode) +
             "</p>" +
-            "<h5 class='tag-teach' title='Can teach'>" + escapeHtml(profile.teachSkill) + "</h5> " +
-            "<h5 class='tag-learn' title='Wants to learn'>" + escapeHtml(profile.learnSkill) + "</h5>" +
-            "<h5 class='emailTag'>" + escapeHtml(profile.email) + "</h5>" +
-            "<a class='btn btn-secondary btn-lg btn-block' href='/detail/" +
-              encodeURIComponent(profile.id) + "'>Read More</a>" +
           "</div>" +
         "</div>" +
-      "</div>";
+        "<dl class='member-card__skills'>" +
+          "<dt>Teaches</dt>" +
+          "<dd><span class='pill pill--teach'>" + escapeHtml(profile.teachSkill) + "</span></dd>" +
+          "<dt>Wants</dt>" +
+          "<dd><span class='pill pill--learn'>" + escapeHtml(profile.learnSkill) + "</span></dd>" +
+        "</dl>" +
+        "<p class='member-card__email'>" + escapeHtml(profile.email) + "</p>" +
+      "</a>";
   }
 
   // Replaces the contents of a container with the given profiles.
   function renderCards($container, profiles, emptyMessage) {
     $container.empty();
     if (!profiles.length) {
-      $container.append("<p class='no-results'>" + escapeHtml(emptyMessage) + "</p>");
+      $container.append("<p class='empty-state'>" + escapeHtml(emptyMessage) + "</p>");
       return;
     }
     $container.append(profiles.map(profileCard).join(""));
@@ -122,7 +153,9 @@ window.Mutuo = (function() {
   return {
     SKILLS: SKILLS,
     escapeHtml: escapeHtml,
-    avatarUrl: avatarUrl,
+    avatar: avatar,
+    initials: initials,
+    avatarTone: avatarTone,
     profileCard: profileCard,
     renderCards: renderCards,
     errorMessage: errorMessage,

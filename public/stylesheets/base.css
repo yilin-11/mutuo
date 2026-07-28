@@ -1,0 +1,486 @@
+/* The shared layer every Mutuo page loads first: tokens, a reset, and the
+   handful of components that appear on more than one page.
+
+   This replaces Bootstrap. The pages used to pull 4.4.1 off a CDN and then
+   spend most of each stylesheet arguing with it — every look below is a
+   restrained one, and Bootstrap's defaults are not. Its JavaScript was already
+   gone (see the collapse handler in js/common.js), so the CSS was the last of
+   it. Two fewer network round trips, and nothing to override. */
+
+/* ---------------------------------------------------------------- tokens -- */
+
+:root {
+  /* Neutrals carry the whole interface. Near-black rather than black, and
+     greys warm enough not to read as blue against the accent. */
+  --bg: #ffffff;
+  --bg-sunken: #fbfbfa;
+  --bg-hover: #f6f6f5;
+  --bg-active: #f0f0ef;
+
+  --text: #1a1a19;
+  --text-muted: #6b6b68;
+  --text-subtle: #9a9a96;
+
+  /* Borders do the work shadows would otherwise be asked to do, so they are
+     the one thing allowed to be nearly invisible and still matter. */
+  --border: rgba(0, 0, 0, 0.09);
+  --border-strong: rgba(0, 0, 0, 0.16);
+
+  /* One accent, kept from the old palette so the app still reads as itself. */
+  --accent: #1f6f4f;
+  --accent-hover: #1a5c42;
+  --accent-tint: #edf5f1;
+  --accent-border: rgba(31, 111, 79, 0.22);
+
+  --danger: #b4342c;
+  --danger-tint: #fdf2f1;
+  --danger-border: rgba(180, 52, 44, 0.2);
+
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* Shadows are for lift, not for drama: one hairline and one soft spread,
+     both under 8% black. Anything heavier looks dated next to a 1px border. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+
+  /* The header is a fixed height on every page, so anything positioned under
+     it can say so rather than guessing. */
+  --nav-height: 56px;
+  --page-max: 1080px;
+}
+
+/* ----------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  /* Tightening tracking as size grows is most of what makes a system font
+     look deliberate at display sizes rather than merely large. */
+  letter-spacing: -0.011em;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Visible to a screen reader, not to anyone else. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- layout -- */
+
+.page {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page--narrow {
+  max-width: 680px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.page-lede {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* -------------------------------------------------------------- nav bar --- */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+  background-color: rgba(255, 255, 255, 0.82);
+  /* Kept legible over whatever scrolls beneath it without going opaque. */
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* The whole of the brand mark: one small accent square, which is enough to
+   place the colour on a page that is otherwise entirely neutral. */
+.nav-brand::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background-color: var(--accent);
+}
+
+/* Everything the toggle hides on a narrow screen, in one element — js/common.js
+   toggles .show on the single node the button's data-target names. */
+.nav-collapse {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-right: auto;
+}
+
+.nav-link {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-hover);
+  color: var(--text);
+}
+
+.nav-link[aria-current="page"] {
+  color: var(--text);
+  font-weight: 500;
+  background-color: var(--bg-active);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-toggle {
+  display: none;
+  padding: 6px 8px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------- controls --- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background-color: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.btn--secondary {
+  background-color: var(--bg);
+  border-color: var(--border-strong);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: var(--text-muted);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  color: var(--text);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--lg {
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  /* A ring rather than a browser outline, so focus is obvious without the
+     control appearing to change size. */
+  box-shadow: 0 0 0 3px rgba(31, 111, 79, 0.12);
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  /* An inline chevron, so no icon font and no image request. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%236b6b68' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.alert {
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--danger-tint);
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- pieces -- */
+
+/* Deterministic initials, drawn here rather than fetched. The old avatars came
+   from a third-party image service — the one before that shut down and left
+   every avatar on the site broken — and a coloured circle with two letters in
+   it is not worth a network request or a dependency. */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  /* Muted enough that ten of them in a grid read as texture rather than as
+     confetti, which is what the old palette did. */
+  background-color: var(--avatar-bg, var(--bg-active));
+  color: var(--avatar-fg, var(--text-muted));
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.avatar--lg {
+  width: 64px;
+  height: 64px;
+  font-size: 20px;
+}
+
+.tone-1 { --avatar-bg: #eaf1ed; --avatar-fg: #2f6f52; }
+.tone-2 { --avatar-bg: #eef0f4; --avatar-fg: #4a5568; }
+.tone-3 { --avatar-bg: #f4efe8; --avatar-fg: #7a6142; }
+.tone-4 { --avatar-bg: #f0eef4; --avatar-fg: #5b5175; }
+.tone-5 { --avatar-bg: #e9f0f2; --avatar-fg: #3d6470; }
+.tone-6 { --avatar-bg: #f4eeee; --avatar-fg: #79504e; }
+
+/* Skill pills. The two are deliberately unequal: what someone can teach is the
+   offer, and it carries the accent; what they want is context, and stays
+   neutral. Reading a card should not require the legend the old two-colour
+   badges needed. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.pill--teach {
+  background-color: var(--accent-tint);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+}
+
+.pill--learn {
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.empty-state {
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------ responsive -- */
+
+@media (max-width: 800px) {
+  .nav {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 16px;
+    gap: 12px;
+    position: static;
+  }
+
+  .nav-toggle {
+    display: block;
+    margin-left: auto;
+  }
+
+  .nav-collapse {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    /* A full basis, not width: the desktop rule sets flex: 1, whose zero basis
+       would keep this on the same line as the brand however wide it was asked
+       to be — so the open menu sat beside the wordmark instead of under it. */
+    flex: 0 0 100%;
+  }
+
+  .nav-collapse.show {
+    display: flex;
+  }
+
+  .nav-menu {
+    flex-direction: column;
+    align-items: stretch;
+    margin-right: 0;
+  }
+
+  .nav-actions {
+    flex-wrap: wrap;
+  }
+
+  .page {
+    padding: 28px 16px 64px;
+  }
+}

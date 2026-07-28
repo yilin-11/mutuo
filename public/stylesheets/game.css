@@ -1,131 +1,68 @@
-/* Random match page. Shares the card look with the member directory. */
-.background {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(114, 179, 194, 0.2), transparent 55%),
-    linear-gradient(170deg, #f6f7f5, #e7ece8);
-  box-shadow: inset 0 0 100px hsla(0, 0%, 0%, 0.06);
-  padding-bottom: 3rem;
-}
+/* The random-match page. The card itself comes from members.css; this file is
+   the prompt above it and the way the dealt member arrives.
 
-.match-intro {
-  padding: 3rem 1rem 1.5rem;
+   The old version drew the card inside an arch — a 50% top border radius — on a
+   tinted gradient. The card is now the same one the directory uses, so the two
+   pages agree about what a member looks like. */
+
+.match {
+  padding-top: 72px;
+  text-align: center;
 }
 
 .match-heading {
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-size: 30px;
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
 }
 
 .match-lede {
-  color: #6c757d;
-  margin-bottom: 1.5rem;
-}
-
-/* #randomBtn used to be absolutely positioned at left: 40%, which put it on
-   top of the dealt card on every screen size. */
-#randomBtn:focus {
-  outline: none;
-  box-shadow: none;
+  margin-bottom: 26px;
+  font-size: 16px;
+  color: var(--text-muted);
 }
 
 .match-status {
-  min-height: 1.5rem;
-  margin-top: 1rem;
-  color: #6c757d;
+  min-height: 22px;
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-#member_cards {
-  display: grid;
-  grid-template-columns: minmax(0, 24rem);
-  justify-content: center;
-  gap: 1.875rem;
-  margin: 0.625rem;
+/* One card, centred, at the width it would have in the directory rather than
+   stretched across the page. */
+.match-result {
+  max-width: 320px;
+  margin: 22px auto 0;
+  text-align: left;
 }
 
-.portfolioContent {
-  padding: 1.75rem 1.25rem;
-  text-align: center;
-  border-radius: 200px 200px 20px 20px;
-  background-color: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* game.js adds .animate after inserting the card, so the entrance runs on each
+   new match rather than only on the first. */
+.match-result .member-card.animate {
+  animation: match-in 0.28s cubic-bezier(0.22, 0.9, 0.3, 1);
 }
 
-.avatarImg {
-  display: block;
-  width: 110px;
-  height: 110px;
-  margin: 0 auto 0.75rem;
-  border-radius: 50%;
-  border: 8px solid #fff;
-  background-color: #eef1ee;
-}
-
-.portfolioTitle {
-  font-size: 1.5rem;
-  margin-bottom: 0.35rem;
-}
-
-.cardCategory {
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: rgb(122, 139, 164);
-  margin-bottom: 0.75rem;
-}
-
-.tag-teach,
-.tag-learn {
-  display: inline-block;
-  padding: 0.3rem 0.6rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  color: #fff;
-  border-radius: 3px;
-}
-
-.tag-teach {
-  background-color: #2f6f4f;
-}
-
-.tag-learn {
-  background-color: rgb(114, 179, 194);
-}
-
-.emailTag {
-  display: block;
-  margin: 0.25rem auto 0.75rem;
-  font-size: 0.9rem;
-  color: #6c757d;
-  word-break: break-word;
-}
-
-.btn-block {
-  margin-top: auto;
-  width: 80%;
-  background-color: #212529;
-  color: #fff;
-}
-
-.btn-block:hover {
-  background-color: transparent;
-  color: #000;
-}
-
-/* Slide-and-fade the dealt card in. */
-.animate {
-  animation: showCard 0.6s ease-out both;
-}
-
-@keyframes showCard {
-  0% {
-    transform: translateX(-40px);
+@keyframes match-in {
+  from {
     opacity: 0;
+    transform: translateY(6px);
   }
-  100% {
-    transform: translateX(0);
+  to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Someone who has asked not to be moved should not be. */
+@media (prefers-reduced-motion: reduce) {
+  .match-result .member-card.animate {
+    animation: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .match {
+    padding-top: 44px;
   }
 }

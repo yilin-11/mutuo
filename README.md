@@ -112,6 +112,8 @@ views/                 One HTML file per page, served by html-routes
 public/                Everything served as-is by express.static
   js/                  common.js holds the shared helpers
   stylesheets/
+    base.css           Design tokens and every shared component
+    <page>.css         Only what one page adds to them
 scripts/
   seed.js              Ten demo members, five reciprocal teach/learn pairs
 test/
@@ -123,6 +125,14 @@ Pages live in `views/`, not under `public/`. Anything inside `public/` is served
 directly by `express.static` without passing through a route, so a page kept
 there is reachable regardless of the guard on its route — which is exactly the
 bug listed above.
+
+There is no CSS framework. The pages pulled Bootstrap off a CDN and then spent
+most of each stylesheet arguing with it, so it was removed rather than
+overridden; its JavaScript had already been replaced by six lines in
+`common.js`. What took its place is `base.css`: custom properties for colour,
+spacing, radius and shadow, and one definition each for the button, input, nav
+and card. A page stylesheet only holds what that page adds. Nothing is fetched
+to render a page — no framework, no web font, no avatar service.
 
 ## Getting started
 

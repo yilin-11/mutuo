@@ -56,7 +56,7 @@ $(document).ready(function() {
         return;
       }
       container.html(
-        "<p class='no-results'>" +
+        "<p class='empty-state'>" +
           Mutuo.escapeHtml(Mutuo.errorMessage(jqXHR, "Could not load members.")) +
         "</p>"
       );

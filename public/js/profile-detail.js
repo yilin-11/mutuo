@@ -6,7 +6,7 @@ $(document).ready(function() {
 
   function showNotFound(message) {
     $("#profile-body").html(
-      "<p class='text-center text-muted my-5'>" + Mutuo.escapeHtml(message) + "</p>"
+      "<p class='empty-state'>" + Mutuo.escapeHtml(message) + "</p>"
     );
     $("#map-section").hide();
   }
@@ -42,7 +42,11 @@ $(document).ready(function() {
       $("#learnSkill").text(profile.learnSkill);
       $("#location").text(profile.city + " " + profile.zipCode);
       $("#bio").text(profile.bio);
-      $("#avatar").attr("src", Mutuo.avatarUrl(profile)).attr("alt", fullName);
+      // The avatar is drawn rather than fetched, so this sets a tone class and
+      // the initials instead of a src. See Mutuo.avatar in common.js.
+      $("#avatar")
+        .addClass("tone-" + Mutuo.avatarTone(profile))
+        .text(Mutuo.initials(profile));
 
       // Escaping matters here too: the email goes into an href attribute.
       $("#contactEmail")

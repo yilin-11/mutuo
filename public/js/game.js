@@ -27,7 +27,7 @@ $(document).ready(function() {
 
     container.html(Mutuo.profileCard(match));
     // The slide-in animation lives on this class (see game.css).
-    container.children(".portfolio-container").addClass("animate");
+    container.children(".member-card").addClass("animate");
     status.text("");
     button.text("Match me with someone else");
   }

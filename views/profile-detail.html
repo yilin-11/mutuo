@@ -6,58 +6,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Member · Mutuo</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/stylesheets/base.css">
   <link rel="stylesheet" href="/stylesheets/profile-detail.css">
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/members">Mutuo</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+  <header class="nav">
+    <a class="nav-brand" href="/members">Mutuo</a>
+    <button class="nav-toggle" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     </button>
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="/members">Members</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/application">My profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/game">Random match</a>
-        </li>
+    <div class="nav-collapse" id="mainNav">
+      <ul class="nav-menu">
+        <li><a class="nav-link" href="/members">Members</a></li>
+        <li><a class="nav-link" href="/application">My profile</a></li>
+        <li><a class="nav-link" href="/game">Random match</a></li>
       </ul>
-      <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
+      <div class="nav-actions">
+        <a class="btn btn--ghost" href="/logout">Log out</a>
+      </div>
     </div>
-  </nav>
+  </header>
 
-  <!-- A CSS gradient banner. The previous source.unsplash.com image now
-       returns 503, so every profile page loaded with a broken image. -->
-  <div id="hero-img" aria-hidden="true"></div>
+  <main class="page page--narrow">
+    <a class="back-link" href="/members">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M8.5 3L4.5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      All members
+    </a>
 
-  <div class="container detailContainer" id="profile-body">
-    <div class="text-center">
-      <img id="avatar" class="img-avatar rounded-circle" src="" alt="">
-      <h1 class="userName">Loading...</h1>
-      <p class="skills">
-        <span class="badge badge-teach">Teaches <span id="teachSkill"></span></span>
-        <span class="badge badge-learn">Wants to learn <span id="learnSkill"></span></span>
-      </p>
+    <div id="profile-body">
+      <div class="profile-head">
+        <!-- The initials and the tone class are set by profile-detail.js. -->
+        <div id="avatar" class="avatar avatar--lg" aria-hidden="true"></div>
+        <div>
+          <h1 class="userName profile-name">Loading…</h1>
+          <p id="location" class="profile-place"></p>
+        </div>
+      </div>
+
+      <dl class="profile-facts">
+        <dt>Teaches</dt>
+        <dd><span class="pill pill--teach" id="teachSkill"></span></dd>
+        <dt>Wants to learn</dt>
+        <dd><span class="pill pill--learn" id="learnSkill"></span></dd>
+        <dt>Contact</dt>
+        <dd><a id="contactEmail" class="profile-email" href="#"></a></dd>
+      </dl>
+
+      <p id="bio" class="profile-bio"></p>
     </div>
 
-    <ul class="list-unstyled text-muted contact-list">
-      <li id="location"></li>
-      <li><a id="contactEmail" href="#"></a></li>
-    </ul>
-
-    <p id="bio"></p>
-  </div>
-
-  <div id="map-section" class="mb-3">
-    <p class="map-caption text-center text-muted">Roughly where this member is based</p>
-    <div id="mapid"></div>
-  </div>
+    <section id="map-section" class="map-section">
+      <h2 class="map-caption">Roughly where this member is based</h2>
+      <div id="mapid"></div>
+    </section>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin=""></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

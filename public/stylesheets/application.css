@@ -1,30 +1,25 @@
-/* Profile form.
-   The old file was mostly rules for a radio-button layout that no longer exists
-   in the markup, and it was peppered with zero-width space characters that had
-   been pasted in from a rich-text editor. */
-.profile-form-container {
-  max-width: 46rem;
-  padding-bottom: 3rem;
+/* The profile form. Every control comes from base.css, so all this file adds is
+   the two-column rhythm and where the buttons sit. */
+
+/* Two fields per row on a wide screen, one on a narrow one. Pairs that belong
+   together — first and last name, city and postcode — stay on a line. */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
 }
 
-.profile-form-container h1 {
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
 }
 
-#profile-form label {
-  font-weight: 600;
-}
-
-#profile-form .form-control:focus {
-  border-color: #2f6f4f;
-  box-shadow: 0 0 0 0.2rem rgba(47, 111, 79, 0.15);
-}
-
-.input-textarea {
-  resize: vertical;
-  min-height: 8rem;
-}
-
-#form-alert {
-  margin-top: 1.5rem;
+@media (max-width: 640px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
 }
