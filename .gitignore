@@ -15,3 +15,9 @@ npm-debug.log*
 # Vercel CLI link metadata
 .vercel
 .env*
+
+# Tooling for whoever is editing the repo, rather than anything the app runs.
+# .agents/ and skills-lock.json arrived with the Neon marketplace integration.
+.claude
+.agents
+skills-lock.json
