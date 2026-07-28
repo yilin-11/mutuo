@@ -30,12 +30,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // a fair trade for not having a fake secret committed to the repo).
 var sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
-  if (isProduction) {
-    var noSecret = new Error("SESSION_SECRET must be set in production. See .env.example.");
-    // See config/config.js — safe to show to a visitor, unlike a driver error.
-    noSecret.mutuoConfig = true;
-    throw noSecret;
-  }
+  // In development this throwaway is the whole point: sessions end when the
+  // server restarts, and no fake secret is committed to the repo.
+  //
+  // In production a missing secret is fatal, but config/requirements.js is what
+  // says so — it refuses every request and stops server.js from binding a port.
+  // Reporting it there rather than throwing here keeps module load from crashing
+  // a serverless invocation before anything can explain why. This value never
+  // signs a cookie that matters, because no request gets through to use it.
   sessionSecret = crypto.randomBytes(32).toString("hex");
 }
 

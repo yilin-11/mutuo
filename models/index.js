@@ -10,7 +10,15 @@ var db = {};
 
 // Make sure the folder holding the SQLite file exists before Sequelize opens it.
 if (config.dialect === "sqlite" && config.storage && config.storage !== ":memory:") {
-  fs.mkdirSync(path.dirname(config.storage), { recursive: true });
+  try {
+    fs.mkdirSync(path.dirname(config.storage), { recursive: true });
+  } catch (err) {
+    // Nowhere to create it — a serverless deployment with no DATABASE_URL, whose
+    // filesystem is read-only, falls back to SQLite and lands here. That is a
+    // configuration error, and config/requirements.js reports it as one on the
+    // way in. Throwing during module load instead would crash the process
+    // before anything could say so.
+  }
 }
 
 var sequelize = config.use_env_variable

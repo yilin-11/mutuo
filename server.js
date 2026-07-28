@@ -17,7 +17,9 @@ ready()
   .catch(function(err) {
     // Without this a bad database configuration failed silently: the process
     // stayed alive with an unhandled rejection and never served a request.
-    console.error("Could not start Mutuo — database sync failed:");
+    // ready() covers the environment as well as the schema now, so this is also
+    // what refuses to boot in production without a SESSION_SECRET.
+    console.error("Could not start Mutuo:");
     console.error(err);
     process.exit(1);
   });

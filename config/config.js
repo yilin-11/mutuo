@@ -20,23 +20,10 @@ function sqlite(file) {
 }
 
 // A serverless deployment has no writable disk, so the SQLite fallback below
-// cannot work there: the file would either fail to open or live in one frozen
-// instance's /tmp and be invisible to the next. Say so plainly rather than
-// letting it surface later as an opaque write error on somebody's first signup.
-if (process.env.VERCEL && !process.env.DATABASE_URL) {
-  var noUrl = new Error(
-    "DATABASE_URL must be set when running on Vercel — the filesystem is not " +
-    "writable, so the SQLite fallback cannot be used. Attach a Postgres " +
-    "database and set DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true. " +
-    "See .env.example."
-  );
-  // Marks this as our own message about how the app is configured, rather than
-  // an error from a driver. api/index.js will show it to a visitor; see there
-  // for why that distinction has to exist.
-  noUrl.mutuoConfig = true;
-  throw noUrl;
-}
-
+// cannot work there. That is reported by config/requirements.js rather than
+// thrown from here — see the comment in that file for why a throw during module
+// load was the wrong tool on Vercel.
+//
 // A managed database (Heroku, Render, RDS, ...) hands us a single URL.
 // When it is present we use it; otherwise production also falls back to
 // SQLite so a fresh deploy still boots instead of crashing on startup.

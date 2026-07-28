@@ -7,6 +7,7 @@
 // two deployments differ only in when they call it, not in what happens.
 var db = require("../models");
 var sessionStore = require("./sessionStore");
+var problems = require("./requirements");
 
 var pending = null;
 
@@ -15,7 +16,22 @@ module.exports = function ready() {
     return pending;
   }
 
-  pending = db.sequelize.sync()
+  pending = Promise.resolve()
+    // Before touching the database, because a deployment missing DATABASE_URL
+    // would otherwise fail here as a driver error rather than as the
+    // configuration mistake it is.
+    .then(function() {
+      var found = problems();
+      if (found.length) {
+        var err = new Error(found.join(" "));
+        // Our own message about how the app is configured, rather than anything
+        // from a driver — api/index.js will quote it to a visitor. See there for
+        // why that distinction has to exist.
+        err.mutuoConfig = true;
+        throw err;
+      }
+      return db.sequelize.sync();
+    })
     // The Sessions table belongs to the session store rather than to models/,
     // so the store creates its own. Awaiting it matters: until this resolves a
     // login has nowhere to write, and on a cold instance that is a live race
