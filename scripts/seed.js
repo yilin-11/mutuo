@@ -87,13 +87,29 @@ var MEMBERS = [
   }
 ];
 
-var wantsFresh = process.argv.indexOf("--fresh") > -1;
-
 // Seeding writes fabricated accounts with a published password. That belongs
-// nowhere near a real deployment, and --fresh would drop the tables outright.
-if (process.env.NODE_ENV === "production") {
-  console.error("Refusing to seed with NODE_ENV=production.");
-  process.exit(1);
+// nowhere near a real deployment, so production refuses by default.
+//
+// The public demo is the one deployment that does want them — its whole point is
+// that a visitor can log in without signing up — so it opts in explicitly with
+// MUTUO_DEMO_SEED=true. Naming the variable rather than dropping the check keeps
+// the default safe: a real deployment has to say the words to get demo accounts.
+function assertSeedable(fresh) {
+  if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+  if (process.env.MUTUO_DEMO_SEED !== "true") {
+    throw new Error(
+      "Refusing to seed with NODE_ENV=production. If this really is a throwaway " +
+      "demo and you want accounts with a published password in it, set " +
+      "MUTUO_DEMO_SEED=true."
+    );
+  }
+  if (fresh) {
+    // --fresh drops every table. No opt-in makes that safe to run against
+    // something reached by a production connection string.
+    throw new Error("Refusing --fresh with NODE_ENV=production. Seeding is additive.");
+  }
 }
 
 // One member: the account first, then the profile that belongs to it. Skips
@@ -123,35 +139,65 @@ function seedMember(member) {
     });
 }
 
-db.sequelize.sync(wantsFresh ? { force: true } : {})
-  .then(function() {
-    if (wantsFresh) {
-      console.log("Dropped and recreated every table.");
-    }
-    // In sequence rather than in parallel: SQLite serialises writes anyway, and
-    // one at a time keeps the "already there" check meaningful.
-    return MEMBERS.reduce(function(chain, member) {
-      return chain.then(function(added) {
-        return seedMember(member).then(function(email) {
-          return email ? added.concat(email) : added;
+/**
+ * Adds the demo members, skipping any that are already there.
+ *
+ * @param {object} [options]
+ * @param {boolean} [options.fresh] Drop and recreate every table first.
+ * @returns {Promise<string[]>} The addresses actually added.
+ */
+function seed(options) {
+  var fresh = Boolean(options && options.fresh);
+
+  // Inside the chain, not before it: thrown synchronously this would escape the
+  // caller's .catch() entirely and surface as an uncaught exception with a stack
+  // trace, instead of the one-line explanation it is written to be.
+  return Promise.resolve()
+    .then(function() {
+      assertSeedable(fresh);
+      return db.sequelize.sync(fresh ? { force: true } : {});
+    })
+    .then(function() {
+      if (fresh) {
+        console.log("Dropped and recreated every table.");
+      }
+      // In sequence rather than in parallel: SQLite serialises writes anyway,
+      // and one at a time keeps the "already there" check meaningful.
+      return MEMBERS.reduce(function(chain, member) {
+        return chain.then(function(added) {
+          return seedMember(member).then(function(email) {
+            return email ? added.concat(email) : added;
+          });
         });
-      });
-    }, Promise.resolve([]));
-  })
-  .then(function(added) {
-    if (!added.length) {
-      console.log("Every demo member was already there. Nothing to do.");
-    } else {
-      console.log("Added " + added.length + " demo member(s).");
-    }
-    console.log("");
-    console.log("Log in as any of them:");
-    console.log("  email:    " + MEMBERS[0].email + "  (or any address above)");
-    console.log("  password: " + DEMO_PASSWORD);
-    return db.sequelize.close();
-  })
-  .catch(function(err) {
-    console.error("Seeding failed:");
-    console.error(err);
-    process.exit(1);
-  });
+      }, Promise.resolve([]));
+    });
+}
+
+function report(added) {
+  if (!added.length) {
+    console.log("Every demo member was already there. Nothing to do.");
+  } else {
+    console.log("Added " + added.length + " demo member(s).");
+  }
+  console.log("");
+  console.log("Log in as any of them:");
+  console.log("  email:    " + MEMBERS[0].email + "  (or any address above)");
+  console.log("  password: " + DEMO_PASSWORD);
+}
+
+module.exports = { seed: seed, report: report, DEMO_PASSWORD: DEMO_PASSWORD };
+
+// Only when run directly, so scripts/vercel-build.js can require this file for
+// seed() without it running — and closing the connection — on import.
+if (require.main === module) {
+  seed({ fresh: process.argv.indexOf("--fresh") > -1 })
+    .then(function(added) {
+      report(added);
+      return db.sequelize.close();
+    })
+    .catch(function(err) {
+      console.error("Seeding failed:");
+      console.error(err.message || err);
+      process.exit(1);
+    });
+}

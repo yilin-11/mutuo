@@ -11,9 +11,10 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
 [![CI](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml/badge.svg)](https://github.com/yilin-11/mutuo/actions/workflows/ci.yml)
 
-<!-- Once deployed, replace this line with:
-     **[Live demo](https://your-app.onrender.com)** — log in as `ada@example.com`
-     with the password `swap-skills-demo`, or sign up for a fresh account. -->
+**[Live demo](https://mutuo-gamma.vercel.app/)** — log in as `ada@example.com`
+with the password `swap-skills-demo`, or sign up for a fresh account. The demo
+runs on a free tier, so the first request after an idle spell waits on a cold
+start.
 
 Run it locally in three commands — see [Getting started](#getting-started). The
 seeded database ships with ten members, so the directory has something in it on
@@ -167,6 +168,7 @@ change anything.
 | `DB_SSL`          | `false`                | Set `true` for managed Postgres, which requires TLS  |
 | `SQL_LOG`         | `false`                | Log every SQL statement                              |
 | `MUTUO_CONTACT`   | placeholder            | Contact string sent to the geocoder — set your own before deploying |
+| `MUTUO_DEMO_SEED` | `false`                | Lets the demo seed run under `NODE_ENV=production` — see [Deployment](#vercel--where-the-live-demo-runs) |
 
 In development a session secret is generated at boot, so sessions end when the
 server restarts. That is deliberate: it means no placeholder secret is committed
@@ -208,18 +210,63 @@ sharing an outbound address share the budget.
 
 ## Deployment
 
-`render.yaml` describes a web service and a Postgres database; point Render at
-the repository and it reads the blueprint. There is also a `Dockerfile` for
-anywhere that takes a container.
-
-Postgres rather than the SQLite default, because Render's filesystem is
-ephemeral: a SQLite file lives only until the next deploy takes the container
-with it.
+Whatever the target, the app needs Postgres rather than the SQLite default. Every
+platform worth deploying this to has an ephemeral filesystem: a SQLite file lives
+either until the next deploy takes the container with it, or — on a serverless
+platform — not at all, because there is nowhere writable to put it.
 
 Set `MUTUO_CONTACT` to your own contact address before deploying — Nominatim's
 [usage policy](https://operations.osmfoundation.org/policies/nominatim/) asks
 that requests identify their operator. For real traffic, use a geocoding service
 intended for it.
+
+### Vercel — where the live demo runs
+
+`api/index.js` hands each request to the same express app that `server.js` runs
+locally, and `vercel.json` rewrites everything that is not a file on disk to it.
+Rewrites are checked after the filesystem, so `public/` is still served from the
+CDN and only real routes cost an invocation.
+
+Serverless has no startup phase in which to create the schema, so
+`config/ready.js` memoises that work and both entry points await the same
+promise. The first request into a cold instance pays for it; the rest do not.
+
+1. Import the repository on Vercel. No build settings to change — the
+   `vercel-build` script is picked up automatically.
+2. Add a Postgres database. Vercel's marketplace has Neon on a free plan that
+   does not expire, and attaching it sets `DATABASE_URL` for you.
+3. Set the remaining environment variables (Settings → Environment Variables):
+
+   | Variable           | Value                                        |
+   | ------------------ | -------------------------------------------- |
+   | `SESSION_SECRET`   | `openssl rand -hex 32` — the app refuses to boot without it |
+   | `DB_DIALECT`       | `postgres`                                   |
+   | `DB_SSL`           | `true`                                       |
+   | `MUTUO_DEMO_SEED`  | `true` — see below                           |
+   | `MUTUO_CONTACT`    | your own contact address                     |
+
+4. Redeploy, so the build runs with those variables present.
+
+`MUTUO_DEMO_SEED=true` is what lets the demo seed itself. `npm run seed` refuses
+to run under `NODE_ENV=production` on its own, because it writes accounts with a
+password published in this README — which belongs nowhere near a real
+deployment. The public demo is the one case that wants exactly that, so it says
+so explicitly rather than the check being weakened for everybody. Seeding stays
+additive even then: `--fresh` drops tables and is refused in production
+regardless.
+
+Deploying without `MUTUO_DEMO_SEED` is fine — the build skips the seed and the
+app comes up with an empty directory.
+
+### Render, or any container host
+
+`render.yaml` describes a web service and a Postgres database; point Render at
+the repository and it reads the blueprint. There is also a `Dockerfile` for
+anywhere that takes a container. Both run `server.js`, which syncs the schema
+before it binds a port, and neither involves `api/index.js`.
+
+Note that Render's free Postgres plan **expires 30 days** after it is created and
+is deleted 14 days later, which is why the demo above is not on it.
 
 ### Known limits
 
@@ -230,7 +277,10 @@ Honest about what is not production-ready:
 - The rate-limit counters and the geocode cache are per-process and in memory.
   Behind more than one process each enforces its own budget; a shared store
   (Redis) is the fix. Sessions are already in the database and do not have this
-  problem.
+  problem. This is worse on the serverless deployment than on a container one:
+  every function instance keeps its own counters, so the login limiter bounds
+  guesses per instance rather than per address, and the geocode cache starts
+  empty on each cold start.
 - There is no email verification, no password reset, and no way to delete an
   account.
 

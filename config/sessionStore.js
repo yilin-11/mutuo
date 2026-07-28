@@ -12,8 +12,17 @@ var db = require("./../models");
 // database; a store with a sweep timer would keep the process alive past the
 // last test. Mocha's --exit papers over that, but not needing it is better.
 var isTest = process.env.NODE_ENV === "test";
+// On Vercel each request runs in an instance that is frozen between calls, so a
+// periodic sweeper either never fires or fires at arbitrary times against a
+// connection budget shared with real requests.
+var isServerless = !!process.env.VERCEL;
 
-module.exports = function sessionStore(session) {
+// Resolves once the Sessions table exists. config/ready.js awaits this before
+// letting a request through, because until it resolves a login has nowhere to
+// write. Defaults to resolved for the tests, which use MemoryStore.
+var lastSync = Promise.resolve();
+
+function sessionStore(session) {
   if (isTest) {
     // Falls back to MemoryStore, which is the right shape for a suite that
     // starts from nothing every run.
@@ -33,9 +42,21 @@ module.exports = function sessionStore(session) {
     expiration: 24 * 60 * 60 * 1000
   });
 
-  // Creates the Session table if it is not there yet. server.js syncs the rest
-  // of the schema; this one belongs to the store, which owns its own shape.
-  store.sync();
+  if (isServerless) {
+    // Expired rows are still treated as "no session" when they are read, so
+    // skipping the sweep leaves dead rows behind rather than stale logins.
+    store.stopExpiringSessions();
+  }
+
+  // Creates the Session table if it is not there yet. models/ owns the rest of
+  // the schema; this one belongs to the store, which owns its own shape.
+  lastSync = store.sync();
 
   return store;
+}
+
+sessionStore.synced = function() {
+  return lastSync;
 };
+
+module.exports = sessionStore;

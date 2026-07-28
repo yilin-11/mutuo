@@ -19,6 +19,19 @@ function sqlite(file) {
   return Object.assign({ dialect: "sqlite", storage: file }, shared);
 }
 
+// A serverless deployment has no writable disk, so the SQLite fallback below
+// cannot work there: the file would either fail to open or live in one frozen
+// instance's /tmp and be invisible to the next. Say so plainly rather than
+// letting it surface later as an opaque write error on somebody's first signup.
+if (process.env.VERCEL && !process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL must be set when running on Vercel — the filesystem is not " +
+    "writable, so the SQLite fallback cannot be used. Attach a Postgres " +
+    "database and set DATABASE_URL, DB_DIALECT=postgres and DB_SSL=true. " +
+    "See .env.example."
+  );
+}
+
 // A managed database (Heroku, Render, RDS, ...) hands us a single URL.
 // When it is present we use it; otherwise production also falls back to
 // SQLite so a fresh deploy still boots instead of crashing on startup.
