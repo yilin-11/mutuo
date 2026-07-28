@@ -1,0 +1,44 @@
+{
+  "root": true,
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "curly": "error",
+    "dot-notation": "error",
+    "eqeqeq": "error",
+    "no-console": "off",
+    "no-multi-spaces": "error",
+    "no-unused-vars": ["error", { "args": "after-used" }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "double", { "avoidEscape": true }],
+    "semi": ["error", "always"]
+  },
+  "overrides": [
+    {
+      "files": ["public/js/**/*.js"],
+      "env": {
+        "browser": true,
+        "node": false
+      },
+      "globals": {
+        "$": "readonly",
+        "jQuery": "readonly",
+        "L": "readonly",
+        "Mutuo": "readonly"
+      }
+    },
+    {
+      "files": ["test/**/*.js"],
+      "env": {
+        "mocha": true
+      }
+    }
+  ]
+}

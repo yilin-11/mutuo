@@ -1,0 +1,103 @@
+/* Shared by the log in and sign up pages.
+   The card classes used to be `.modal` and `.card`, which are both real
+   Bootstrap components — the page only looked right because this file happened
+   to load afterwards and undo Bootstrap's `display: none`. They have their own
+   names now so nothing is fighting the framework. */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Varela Round", "Segoe UI", Roboto, sans-serif;
+  /* Was a cdn.glitch.com photo that no longer resolves. */
+  background:
+    radial-gradient(circle at 15% 25%, rgba(216, 166, 87, 0.28), transparent 55%),
+    linear-gradient(160deg, #123a2c, #0b241b 70%);
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 2.5rem 2rem;
+  background-color: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+}
+
+.auth-brand {
+  display: block;
+  text-align: center;
+  font-family: "Lobster", cursive;
+  font-size: 2rem;
+  color: #d8a657;
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+}
+
+.auth-brand:hover {
+  color: #e9be7c;
+  text-decoration: none;
+}
+
+.auth-title {
+  font-size: 1.35rem;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 1.75rem;
+}
+
+.auth-card label {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.auth-card .form-control {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px 4px 0 0;
+  /* The old rule set the input colour to rgba(0,0,0,0.4) on a dark card, so
+     what you typed was very nearly invisible. */
+  color: #fff;
+  padding: 0.5rem 0.65rem;
+}
+
+.auth-card .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-bottom-color: #d8a657;
+  box-shadow: none;
+  color: #fff;
+}
+
+.auth-card .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.5px;
+}
+
+.auth-card .btn-light {
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.auth-switch {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.auth-switch a {
+  color: #d8a657;
+}
+
+#form-alert {
+  font-size: 0.9rem;
+}

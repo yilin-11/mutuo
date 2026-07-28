@@ -1,0 +1,30 @@
+/* Profile form.
+   The old file was mostly rules for a radio-button layout that no longer exists
+   in the markup, and it was peppered with zero-width space characters that had
+   been pasted in from a rich-text editor. */
+.profile-form-container {
+  max-width: 46rem;
+  padding-bottom: 3rem;
+}
+
+.profile-form-container h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+#profile-form label {
+  font-weight: 600;
+}
+
+#profile-form .form-control:focus {
+  border-color: #2f6f4f;
+  box-shadow: 0 0 0 0.2rem rgba(47, 111, 79, 0.15);
+}
+
+.input-textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+#form-alert {
+  margin-top: 1.5rem;
+}

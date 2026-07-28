@@ -1,0 +1,13 @@
+/node_modules
+
+# Local secrets
+.env
+
+# SQLite database files
+/data
+*.sqlite
+*.sqlite3
+
+# OS / editor cruft
+.DS_Store
+npm-debug.log*

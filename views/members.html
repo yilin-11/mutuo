@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Members · Mutuo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="/stylesheets/members.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="background">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="/members">Mutuo</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link" href="/members">Members <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/application">My profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/game">Random match</a>
+          </li>
+        </ul>
+        <form id="search-form" class="form-inline my-2 my-lg-0">
+          <label class="sr-only" for="myInput">Search members</label>
+          <input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Search skills, city or postcode..." aria-label="Search members">
+          <button id="searchBtn" class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row mt-4">
+        <div id="member_cards">
+          <p class="no-results">Loading members...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/members.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+/* Landing page.
+   The hero used to load a background photo from cdn.glitch.com, which no longer
+   resolves at all — the page rendered as plain white text on white. It is a CSS
+   gradient now, so there is nothing left to go missing. */
+:root {
+  --mutuo-deep: #123a2c;
+  --mutuo-mid: #2f6f4f;
+  --mutuo-warm: #d8a657;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(216, 166, 87, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(47, 111, 79, 0.55), transparent 60%),
+    linear-gradient(160deg, var(--mutuo-deep), #0b241b 70%);
+  animation: light 3s ease-out;
+}
+
+@keyframes light {
+  0% {
+    filter: brightness(45%);
+  }
+  100% {
+    filter: brightness(100%);
+  }
+}
+
+.hero-content {
+  position: relative;
+  color: #fff;
+  text-align: center;
+  max-width: 44rem;
+  padding: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin: 0;
+  animation: learn 1.6s ease-in;
+}
+
+@keyframes learn {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hero-subtitle {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  margin: 0.75rem 0 1.5rem;
+  color: var(--mutuo-warm);
+}
+
+.hero-tagline {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 auto 2.5rem;
+  max-width: 32rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.hero-button {
+  display: inline-block;
+  /* The original rule here was `padding: 0.9375rem1.875rem` — a missing space
+     made the whole declaration invalid, so the buttons had no padding. */
+  padding: 0.875rem 1.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-button:hover,
+.hero-button:focus {
+  background-color: #fff;
+  border-color: #fff;
+  color: var(--mutuo-deep);
+  text-decoration: none;
+}
+
+.hero-button--primary {
+  background-color: var(--mutuo-warm);
+  border-color: var(--mutuo-warm);
+  color: var(--mutuo-deep);
+  font-weight: 600;
+}
+
+.hero-button--primary:hover,
+.hero-button--primary:focus {
+  background-color: #e9be7c;
+  border-color: #e9be7c;
+}

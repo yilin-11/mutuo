@@ -1,0 +1,102 @@
+/* Member directory. */
+.background {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(216, 166, 87, 0.18), transparent 55%),
+    linear-gradient(170deg, #f6f7f5, #e7ece8);
+  box-shadow: inset 0 0 100px hsla(0, 0%, 0%, 0.06);
+  padding-bottom: 3rem;
+}
+
+#member_cards {
+  width: 100%;
+  display: grid;
+  /* Was `auto auto auto`, which forced three columns at every width and
+     overflowed the page on a phone. */
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.875rem;
+  margin: 0.625rem;
+}
+
+.portfolioContent {
+  height: 100%;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  border-radius: 15px 50px;
+  background-color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatarImg {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background-color: #eef1ee;
+}
+
+.portfolioTitle {
+  font-size: 1.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.cardCategory {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: rgb(122, 139, 164);
+  margin-bottom: 0.75rem;
+}
+
+/* Renamed from `.tags` / `.tages` — the second was a typo that had to be
+   repeated in the JavaScript to keep the styling working. */
+.tag-teach,
+.tag-learn {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #fff;
+  border-radius: 3px;
+}
+
+.tag-teach {
+  background-color: #2f6f4f;
+}
+
+.tag-learn {
+  background-color: rgb(114, 179, 194);
+}
+
+.emailTag {
+  display: block;
+  width: 100%;
+  margin: 0.25rem auto 0.75rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+  word-break: break-word;
+}
+
+.btn-block {
+  margin-top: auto;
+  width: 80%;
+  background-color: #212529;
+  color: #fff;
+}
+
+.btn-block:hover {
+  background-color: transparent;
+  color: #000;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.1rem;
+}

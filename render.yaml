@@ -1,0 +1,42 @@
+# Render blueprint: one web service and one Postgres database.
+#
+# Point Render at this repository and it will read this file — no dashboard
+# clicking, and the deployment is reviewable in the same diff as the code.
+#
+# Postgres, not the SQLite default: Render's filesystem is ephemeral, so a
+# SQLite file lives only until the next deploy takes the container with it.
+services:
+  - type: web
+    name: mutuo
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: node server.js
+    # server.js only starts listening once the schema has synced, so a healthy
+    # response here means the database is genuinely reachable.
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Generated once and kept: app.js refuses to boot in production without
+      # it, and rotating it logs everybody out.
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mutuo-db
+          property: connectionString
+      - key: DB_DIALECT
+        value: postgres
+      - key: DB_SSL
+        value: "true"
+      # Nominatim's usage policy wants requests to identify their operator.
+      # sync: false means Render prompts for it rather than storing it here.
+      - key: MUTUO_CONTACT
+        sync: false
+
+databases:
+  - name: mutuo-db
+    plan: free
+    databaseName: mutuo
+    user: mutuo

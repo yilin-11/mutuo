@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member · Mutuo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/profile-detail.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/members">Mutuo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/members">Members</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/application">My profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/game">Random match</a>
+        </li>
+      </ul>
+      <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
+    </div>
+  </nav>
+
+  <!-- A CSS gradient banner. The previous source.unsplash.com image now
+       returns 503, so every profile page loaded with a broken image. -->
+  <div id="hero-img" aria-hidden="true"></div>
+
+  <div class="container detailContainer" id="profile-body">
+    <div class="text-center">
+      <img id="avatar" class="img-avatar rounded-circle" src="" alt="">
+      <h1 class="userName">Loading...</h1>
+      <p class="skills">
+        <span class="badge badge-teach">Teaches <span id="teachSkill"></span></span>
+        <span class="badge badge-learn">Wants to learn <span id="learnSkill"></span></span>
+      </p>
+    </div>
+
+    <ul class="list-unstyled text-muted contact-list">
+      <li id="location"></li>
+      <li><a id="contactEmail" href="#"></a></li>
+    </ul>
+
+    <p id="bio"></p>
+  </div>
+
+  <div id="map-section" class="mb-3">
+    <p class="map-caption text-center text-muted">Roughly where this member is based</p>
+    <div id="mapid"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin=""></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/profile-detail.js"></script>
+</body>
+
+</html>

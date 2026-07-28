@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My profile · Mutuo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/application.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/members">Mutuo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/members">Members</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/application">My profile <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/game">Random match</a>
+        </li>
+      </ul>
+      <a class="btn btn-outline-light my-2 my-sm-0 ml-lg-3" href="/logout">Log out</a>
+    </div>
+  </nav>
+
+  <div class="container profile-form-container">
+    <h1 id="form-title" class="text-center mt-4">Create your profile</h1>
+    <p class="text-center text-muted">
+      Tell other members what you can teach and what you'd like to learn.
+    </p>
+
+    <!-- Filled in by application.js when the server rejects the submission. -->
+    <div id="form-alert" class="alert alert-danger" role="alert" style="display: none"></div>
+
+    <form id="profile-form" novalidate>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" autocomplete="given-name" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" class="form-control" placeholder="Where are you based?" autocomplete="address-level2" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="zipCode">Postal code</label>
+          <input type="text" id="zipCode" name="zipCode" class="form-control" placeholder="Used to place you on the map" autocomplete="postal-code" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="teachSkill">Which skill can you share?</label>
+          <!-- Both lists are populated from the shared list in common.js. -->
+          <select id="teachSkill" name="teachSkill" class="form-control" required></select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="learnSkill">Which skill do you want to learn?</label>
+          <select id="learnSkill" name="learnSkill" class="form-control" required></select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">About you</label>
+        <textarea id="bio" name="bio" class="input-textarea form-control" rows="5" placeholder="Tell other members a little about yourself" maxlength="2000" required></textarea>
+      </div>
+
+      <div class="form-group text-center">
+        <button type="submit" id="submit" class="btn btn-outline-dark mr-3">Submit</button>
+        <a href="/members" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/application.js"></script>
+</body>
+
+</html>

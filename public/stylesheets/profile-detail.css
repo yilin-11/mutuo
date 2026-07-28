@@ -1,0 +1,73 @@
+/* A single member's profile. */
+
+/* Replaces the source.unsplash.com <img>, which now returns 503. */
+#hero-img {
+  height: 220px;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(216, 166, 87, 0.5), transparent 55%),
+    linear-gradient(120deg, #2f6f4f, #123a2c);
+}
+
+.detailContainer {
+  max-width: 44rem;
+  padding-bottom: 2rem;
+}
+
+.img-avatar {
+  height: 120px;
+  width: 120px;
+  margin: -60px auto 1rem;
+  display: block;
+  border: 4px solid #fff;
+  background-color: #eef1ee;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.userName {
+  font-size: 1.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.skills .badge {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.45rem 0.7rem;
+  margin: 0 0.2rem;
+  color: #fff;
+}
+
+.badge-teach {
+  background-color: #2f6f4f;
+}
+
+.badge-learn {
+  background-color: rgb(114, 179, 194);
+}
+
+.contact-list {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.contact-list li {
+  margin-bottom: 0.35rem;
+}
+
+#bio {
+  margin-top: 1rem;
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.map-caption {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+#mapid {
+  height: 400px;
+  width: 90%;
+  max-width: 60rem;
+  margin: 0 auto;
+  border-radius: 8px;
+}
