@@ -88,6 +88,60 @@ body {
   font-weight: 600;
 }
 
+/* The demo account offer. Set apart from the form by a rule and a lighter
+   panel, so it reads as an aside for a visitor who is only looking rather than
+   as another field to fill in. Hidden in the markup and revealed by login.js
+   only when the server says this is a demo. */
+.demo-hint {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.demo-hint-lead {
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: #d8a657;
+}
+
+.demo-hint-body {
+  margin-bottom: 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* A labelled pair per row rather than a sentence, because both halves are
+   meant to be read off the screen and typed somewhere else — and a sentence
+   puts its full stop right up against the password. */
+.demo-creds {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.demo-creds dt {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.demo-creds dd {
+  margin: 0;
+}
+
+.demo-hint code {
+  padding: 0.1rem 0.3rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  /* Bootstrap's default is a pink that disappears against the green card. */
+  color: #fff;
+  /* The address and the password both have to survive being read off a screen
+     and typed somewhere else. */
+  white-space: nowrap;
+}
+
 .auth-switch {
   margin: 1.5rem 0 0;
   text-align: center;

@@ -33,6 +33,26 @@
         <button type="submit" class="btn btn-light btn-block">Log in</button>
       </form>
 
+      <!-- Filled in and revealed by login.js, but only on a demo deployment:
+           the server answers /api/demo with null anywhere else. Empty here so
+           the credentials live in one place, config/demo.js. -->
+      <div id="demo-hint" class="demo-hint" style="display: none">
+        <p class="demo-hint-lead">Just looking around?</p>
+        <p class="demo-hint-body">
+          This is a demo, seeded with ten members who can teach each other
+          something. Sign in with:
+        </p>
+        <dl class="demo-creds">
+          <dt>email</dt>
+          <dd><code id="demo-email"></code></dd>
+          <dt>password</dt>
+          <dd><code id="demo-password"></code></dd>
+        </dl>
+        <button type="button" id="demo-fill" class="btn btn-outline-light btn-sm btn-block">
+          Fill this in for me
+        </button>
+      </div>
+
       <p class="auth-switch">New here? <a href="/signup">Create an account</a></p>
     </div>
   </div>

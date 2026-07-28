@@ -5,6 +5,8 @@ var request = require("supertest");
 
 var app = require("../app");
 var db = require("../models");
+var demo = require("../config/demo");
+var seeder = require("../scripts/seed");
 
 var VALID_PROFILE = {
   firstName: "Ada",
@@ -395,6 +397,46 @@ describe("Mutuo", function() {
         .then(function(res) {
           assert.strictEqual(res.headers["x-powered-by"], undefined);
         });
+    });
+  });
+
+  describe("the demo account", function() {
+    // MUTUO_DEMO_SEED is not set while the suite runs, which is the case this
+    // has to be sure about: every other deployment must not publish a password.
+    it("is not offered unless the deployment is a demo", function() {
+      return request(app)
+        .get("/api/demo")
+        .expect(200)
+        .then(function(res) {
+          assert.strictEqual(res.body.account, null);
+        });
+    });
+
+    it("is offered when MUTUO_DEMO_SEED is set", function() {
+      process.env.MUTUO_DEMO_SEED = "true";
+      return request(app)
+        .get("/api/demo")
+        .expect(200)
+        .then(function(res) {
+          assert.strictEqual(res.body.account.email, demo.EMAIL);
+          assert.strictEqual(res.body.account.password, demo.PASSWORD);
+        })
+        .then(function() {
+          delete process.env.MUTUO_DEMO_SEED;
+        }, function(err) {
+          delete process.env.MUTUO_DEMO_SEED;
+          throw err;
+        });
+    });
+
+    // The login page hands a visitor these credentials, so an address the seed
+    // does not create would send them to a form that rejects them.
+    it("names a member the seed actually creates", function() {
+      var seeded = seeder.MEMBERS.some(function(member) {
+        return member.email === demo.EMAIL;
+      });
+      assert.ok(seeded, demo.EMAIL + " is not one of the seeded members.");
+      assert.strictEqual(seeder.DEMO_PASSWORD, demo.PASSWORD);
     });
   });
 

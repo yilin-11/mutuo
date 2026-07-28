@@ -11,8 +11,11 @@
 // Every skill below comes from the list in public/js/common.js, so the profile
 // form's dropdowns can represent them.
 var db = require("../models");
+var demo = require("../config/demo");
 
-var DEMO_PASSWORD = "swap-skills-demo";
+// Shared with the login page, which offers one of these accounts to a visitor
+// on a demo deployment. See config/demo.js.
+var DEMO_PASSWORD = demo.PASSWORD;
 
 var MEMBERS = [
   {
@@ -181,11 +184,18 @@ function report(added) {
   }
   console.log("");
   console.log("Log in as any of them:");
-  console.log("  email:    " + MEMBERS[0].email + "  (or any address above)");
+  console.log("  email:    " + demo.EMAIL + "  (or any address above)");
   console.log("  password: " + DEMO_PASSWORD);
 }
 
-module.exports = { seed: seed, report: report, DEMO_PASSWORD: DEMO_PASSWORD };
+module.exports = {
+  seed: seed,
+  report: report,
+  DEMO_PASSWORD: DEMO_PASSWORD,
+  // Exported for the test that checks the account config/demo.js offers is one
+  // this file actually creates.
+  MEMBERS: MEMBERS
+};
 
 // Only when run directly, so scripts/vercel-build.js can require this file for
 // seed() without it running — and closing the connection — on import.

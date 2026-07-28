@@ -3,6 +3,7 @@ var passport = require("../config/passport");
 var apiAuth = require("../config/middleware/apiAuth");
 var rateLimit = require("../config/middleware/rateLimit");
 var geocode = require("../config/geocode");
+var demo = require("../config/demo");
 
 // Counts only failed logins, so a member typing their password correctly never
 // spends budget, while someone guessing runs out after ten tries a quarter hour.
@@ -86,6 +87,19 @@ function handleWriteError(err, res, next) {
 }
 
 module.exports = function(app) {
+
+  // --- Demo ------------------------------------------------------------------
+
+  // What the login page asks before deciding whether to offer a way in without
+  // signing up. Answers null on any deployment that is not a demo, so the hint
+  // is absent rather than merely hidden — see config/demo.js.
+  //
+  // Open deliberately: it is the one thing a visitor needs before they have a
+  // session, and the credentials it hands out are the same ones the seed prints
+  // to the build log.
+  app.get("/api/demo", function(req, res) {
+    res.json({ account: demo.account() });
+  });
 
   // --- Authentication -------------------------------------------------------
 
