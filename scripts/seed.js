@@ -24,6 +24,7 @@
 // the postal code's centre is a constant, and seeding stays offline.
 var db = require("../models");
 var demo = require("../config/demo");
+var addMissingColumns = require("../config/schema");
 
 // Shared with the login page, which offers one of these accounts to a visitor
 // on a demo deployment. See config/demo.js.
@@ -153,13 +154,46 @@ function assertSeedable(fresh) {
   }
 }
 
-// One member: the account first, then the profile that belongs to it. Skips
-// anyone already present, so re-running is safe without --fresh.
+// A demo member seeded before Profile carried coordinates has none of its own:
+// config/schema.js adds the columns to an existing table but cannot know what
+// belongs in them, and the seed skips anyone already present.
+//
+// Left alone, a demo that has been deployed before would come back with twelve
+// members and not one of them placed — no distances, nothing for the nearby
+// ordering to sort on, and the account the login page hands out greeted by
+// "we could not place your postal code". That is the one deployment whose whole
+// job is to show the feature working.
+//
+// Only fills a blank. A member who has since been placed — or moved — is left
+// exactly as they are.
+function placeExisting(user, member) {
+  return db.Profile.findOne({ where: { userId: user.id } })
+    .then(function(profile) {
+      // Both spellings of "no value": a row read back from the database gives
+      // null, but an instance whose column was never set reads undefined, and
+      // a check for only one of them silently skips the other.
+      var placed = profile && profile.latitude !== null && profile.latitude !== undefined;
+      if (!profile || placed) {
+        return false;
+      }
+      return profile
+        .update({ latitude: member.latitude, longitude: member.longitude })
+        .then(function() {
+          return true;
+        });
+    });
+}
+
+// One member: the account first, then the profile that belongs to it. Anyone
+// already present is left alone apart from the coordinate backfill above, so
+// re-running is safe without --fresh.
 function seedMember(member) {
   return db.User.findOne({ where: { email: member.email } })
     .then(function(existing) {
       if (existing) {
-        return null;
+        return placeExisting(existing, member).then(function(placed) {
+          return { added: null, placed: placed };
+        });
       }
       return db.User.create({ email: member.email, password: DEMO_PASSWORD })
         .then(function(user) {
@@ -177,17 +211,19 @@ function seedMember(member) {
           });
         })
         .then(function() {
-          return member.email;
+          return { added: member.email, placed: false };
         });
     });
 }
 
 /**
- * Adds the demo members, skipping any that are already there.
+ * Adds the demo members, skipping any that are already there — apart from
+ * filling in coordinates for any that predate the columns holding them.
  *
  * @param {object} [options]
  * @param {boolean} [options.fresh] Drop and recreate every table first.
- * @returns {Promise<string[]>} The addresses actually added.
+ * @returns {Promise<{added: string[], placed: number}>} The addresses actually
+ *   added, and how many existing members were given coordinates.
  */
 function seed(options) {
   var fresh = Boolean(options && options.fresh);
@@ -200,6 +236,15 @@ function seed(options) {
       assertSeedable(fresh);
       return db.sequelize.sync(fresh ? { force: true } : {});
     })
+    // The same additive step the app does on the way up (config/ready.js), for
+    // the same reason and because this runs against the same database without
+    // going through it. Without this the seed reads its own models against a
+    // table that predates half their columns and dies on "no such column" — and
+    // since scripts/vercel-build.js treats a failed seed as a failed build, a
+    // deployment that added a column would refuse to ship at all.
+    .then(function() {
+      return addMissingColumns();
+    })
     .then(function() {
       if (fresh) {
         console.log("Dropped and recreated every table.");
@@ -207,20 +252,26 @@ function seed(options) {
       // In sequence rather than in parallel: SQLite serialises writes anyway,
       // and one at a time keeps the "already there" check meaningful.
       return MEMBERS.reduce(function(chain, member) {
-        return chain.then(function(added) {
-          return seedMember(member).then(function(email) {
-            return email ? added.concat(email) : added;
+        return chain.then(function(result) {
+          return seedMember(member).then(function(outcome) {
+            return {
+              added: outcome.added ? result.added.concat(outcome.added) : result.added,
+              placed: result.placed + (outcome.placed ? 1 : 0)
+            };
           });
         });
-      }, Promise.resolve([]));
+      }, Promise.resolve({ added: [], placed: 0 }));
     });
 }
 
-function report(added) {
-  if (!added.length) {
-    console.log("Every demo member was already there. Nothing to do.");
+function report(result) {
+  if (!result.added.length) {
+    console.log("Every demo member was already there.");
   } else {
-    console.log("Added " + added.length + " demo member(s).");
+    console.log("Added " + result.added.length + " demo member(s).");
+  }
+  if (result.placed) {
+    console.log("Filled in coordinates for " + result.placed + " member(s) that had none.");
   }
   console.log("");
   console.log("Log in as any of them:");
@@ -241,8 +292,8 @@ module.exports = {
 // seed() without it running — and closing the connection — on import.
 if (require.main === module) {
   seed({ fresh: process.argv.indexOf("--fresh") > -1 })
-    .then(function(added) {
-      report(added);
+    .then(function(result) {
+      report(result);
       return db.sequelize.close();
     })
     .catch(function(err) {

@@ -34,8 +34,8 @@ var seeder = require("./seed");
 // Additive, and every member is skipped if already present, so this is safe to
 // run on every deploy. --fresh is refused in production by seed.js.
 seeder.seed()
-  .then(function(added) {
-    seeder.report(added);
+  .then(function(result) {
+    seeder.report(result);
     return db.sequelize.close();
   })
   .catch(function(err) {

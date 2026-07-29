@@ -1028,6 +1028,59 @@ describe("Mutuo", function() {
         });
     });
 
+    // A demo that has been deployed before already has these members, and the
+    // seed leaves anyone already present alone — so without a backfill the
+    // twelve of them would come back from a deploy with no coordinates at all,
+    // and the nearby ordering would have nothing to sort on for the one
+    // deployment whose job is to demonstrate it.
+    it("fills in coordinates for demo members that were seeded without them", function() {
+      var member = seeder.MEMBERS[0];
+      var user;
+
+      // A member as an earlier version of the seed would have left them.
+      return db.User.create({ email: "stale-demo@example.com", password: seeder.DEMO_PASSWORD })
+        .then(function(created) {
+          user = created;
+          return db.Profile.create({
+            userId: user.id,
+            firstName: member.firstName,
+            lastName: member.lastName,
+            city: member.city,
+            zipCode: member.zipCode,
+            teachSkill: member.teachSkill,
+            learnSkill: member.learnSkill,
+            bio: member.bio
+          });
+        })
+        // Read back rather than trusting the instance just created: an attribute
+        // that was never set reads undefined there, and null only once it has
+        // been through the database.
+        .then(function() {
+          return db.Profile.findOne({ where: { userId: user.id } });
+        })
+        .then(function(profile) {
+          assert.strictEqual(profile.latitude, null, "starts unplaced, as an old row would");
+          // The seed works from the address, so borrow this member's for the
+          // length of the check and put it back afterwards.
+          var realEmail = member.email;
+          member.email = "stale-demo@example.com";
+
+          return seeder.seed()
+            .then(function(result) {
+              member.email = realEmail;
+              assert.ok(result.placed > 0, "should report what it filled in");
+              return db.Profile.findOne({ where: { userId: user.id } });
+            }, function(err) {
+              member.email = realEmail;
+              throw err;
+            });
+        })
+        .then(function(profile) {
+          assert.strictEqual(profile.latitude, member.latitude);
+          assert.strictEqual(profile.longitude, member.longitude);
+        });
+    });
+
     // The login page hands a visitor these credentials, so an address the seed
     // does not create would send them to a form that rejects them.
     it("names a member the seed actually creates", function() {
