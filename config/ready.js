@@ -8,6 +8,7 @@
 var db = require("../models");
 var sessionStore = require("./sessionStore");
 var problems = require("./requirements");
+var addMissingColumns = require("./schema");
 
 var pending = null;
 
@@ -26,6 +27,12 @@ module.exports = function ready() {
         throw err;
       }
       return db.sequelize.sync();
+    })
+    // sync() creates tables it cannot find but never alters one it can, so a
+    // database that predates a new column needs it added explicitly. See
+    // config/schema.js.
+    .then(function() {
+      return addMissingColumns();
     })
     // The Sessions table belongs to the session store rather than to models/,
     // so the store creates its own. Awaiting it matters: until this resolves a

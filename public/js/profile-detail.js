@@ -32,6 +32,25 @@ $(document).ready(function() {
     }).addTo(map);
   }
 
+  // The coordinates are resolved once when a profile is saved and stored on it,
+  // so the usual path draws the map without asking the geocoder anything. The
+  // fallback covers a profile saved before that column existed, or one whose
+  // postal code the geocoder could not place at the time.
+  function placeOnMap(profile) {
+    if (typeof profile.latitude === "number" && typeof profile.longitude === "number") {
+      renderMap({ lat: profile.latitude, lng: profile.longitude });
+      return Promise.resolve();
+    }
+
+    // The map is a nice-to-have. If the geocoder is unreachable or does not
+    // know the postal code, hide the section rather than breaking the page.
+    return $.get("/api/geocode", { zip: profile.zipCode, city: profile.city })
+      .then(renderMap)
+      .catch(function() {
+        $("#map-section").hide();
+      });
+  }
+
   $.get("/api/profiles/" + encodeURIComponent(id))
     .then(function(profile) {
       var fullName = profile.firstName + " " + profile.lastName;
@@ -40,8 +59,12 @@ $(document).ready(function() {
       $(".userName").text(fullName);
       $("#teachSkill").text(profile.teachSkill);
       $("#learnSkill").text(profile.learnSkill);
-      $("#location").text(profile.city + " " + profile.zipCode);
       $("#bio").text(profile.bio);
+
+      var place = profile.city + " " + profile.zipCode;
+      var distance = Mutuo.formatDistance(profile.distanceKm);
+      $("#location").text(distance ? place + " · " + distance : place);
+
       // The avatar is drawn rather than fetched, so this sets a tone class and
       // the initials instead of a src. See Mutuo.avatar in common.js.
       $("#avatar")
@@ -51,15 +74,32 @@ $(document).ready(function() {
       // Escaping matters here too: the email goes into an href attribute.
       $("#contactEmail")
         .text(profile.email)
-        .attr("href", "mailto:" + encodeURIComponent(profile.email).replace(/%40/g, "@"));
+        .attr("href", Mutuo.mailto(profile.email));
 
-      // The map is a nice-to-have. If the geocoder is unreachable or does not
-      // know the postal code, hide the section rather than breaking the page.
-      return $.get("/api/geocode", { zip: profile.zipCode, city: profile.city })
-        .then(renderMap)
-        .catch(function() {
-          $("#map-section").hide();
-        });
+      // The long form of what the card says in three words. Directly under the
+      // two skills, which is what it is about.
+      $("#swap-note").html(Mutuo.swapNote(profile.swap));
+
+      // Nothing to offer on your own profile: you cannot match with yourself,
+      // and the server refuses it anyway.
+      if (!profile.isOwn) {
+        var $action = $("#match-action");
+        $action.html(
+          (profile.mutual ? "<span class='pill pill--mutual'>Mutual</span>" : "") +
+          "<button type='button' class='btn match-btn" +
+            (profile.matched ? " match-btn--on" : "") +
+            "' data-match-id='" + Mutuo.escapeHtml(profile.id) +
+            "' aria-pressed='" + (profile.matched ? "true" : "false") + "'>" +
+            "<span class='match-btn__label'>" +
+              (profile.matched ? "Matched" : "Match") +
+            "</span>" +
+          "</button>"
+        );
+        $action.prop("hidden", false);
+        Mutuo.bindMatchToggle($action);
+      }
+
+      return placeOnMap(profile);
     })
     .catch(function(jqXHR) {
       if (Mutuo.redirectedToLogin(jqXHR)) {

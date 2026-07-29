@@ -4,15 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Random match · Mutuo</title>
+  <title>Matches · Mutuo</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- In head and not deferred: the stored theme must be on <html> before the
        body paints. See public/js/theme.js. -->
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/stylesheets/base.css">
-  <!-- The member card itself is defined once, in members.css. -->
+  <!-- The card and the grid are defined once, in members.css. -->
   <link rel="stylesheet" href="/stylesheets/members.css">
-  <link rel="stylesheet" href="/stylesheets/game.css">
 </head>
 
 <body>
@@ -25,9 +24,11 @@
     </button>
     <div class="nav-collapse" id="mainNav">
       <ul class="nav-menu">
-        <li><a class="nav-link" href="/members">Members</a></li>
+        <li><a class="nav-link" href="/members">People nearby</a></li>
+        <li>
+          <a class="nav-link" href="/matches" aria-current="page">Matches<span class="nav-badge" data-match-badge hidden></span></a>
+        </li>
         <li><a class="nav-link" href="/application">My profile</a></li>
-        <li><a class="nav-link" href="/game" aria-current="page">Random match</a></li>
       </ul>
       <div class="nav-actions">
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
@@ -44,22 +45,24 @@
     </div>
   </header>
 
-  <main class="page page--narrow match">
-    <h1 class="match-heading">Not sure who to ask?</h1>
-    <p class="match-lede">Let Mutuo pick a member for you.</p>
+  <main class="page">
+    <div class="page-header">
+      <h1 class="page-title">Matches</h1>
+      <p class="page-lede">
+        The members you have matched with. A “Mutual” pill means they have
+        matched you back — those are the ones worth writing to first.
+      </p>
+      <p id="match-summary" class="page-count" role="status" aria-live="polite"></p>
+    </div>
 
-    <form id="match-form">
-      <button id="randomBtn" class="btn btn--primary btn--lg" type="submit">Match me with someone</button>
-    </form>
-
-    <p id="match-status" class="match-status" role="status" aria-live="polite"></p>
-
-    <div id="member_cards" class="match-result"></div>
+    <div id="member_cards" class="member-grid">
+      <p class="empty-state">Loading your matches…</p>
+    </div>
   </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="/js/common.js"></script>
-  <script src="/js/game.js"></script>
+  <script src="/js/matches.js"></script>
 </body>
 
 </html>

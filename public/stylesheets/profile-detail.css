@@ -28,6 +28,20 @@
   margin-bottom: 28px;
 }
 
+.profile-head__identity {
+  min-width: 0;
+  /* Takes the slack, so the match button sits against the right edge. */
+  flex: 1;
+}
+
+/* The match toggle, and the Mutual pill when there is one. */
+.profile-head__action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .profile-name {
   font-size: 24px;
   letter-spacing: -0.02em;
@@ -73,6 +87,17 @@
 
 .profile-email:hover {
   text-decoration: underline;
+}
+
+/* How this member's skills line up with yours, directly under the pair of them.
+   The rule itself is in base.css; this is only where it sits. Empty when there
+   is no overlap, and an empty box must not leave a gap. */
+#swap-note {
+  margin: -18px 0 26px;
+}
+
+#swap-note:empty {
+  display: none;
 }
 
 .profile-bio {

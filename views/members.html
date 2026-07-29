@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Members · Mutuo</title>
+  <title>People nearby · Mutuo</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- In head and not deferred: the stored theme must be on <html> before the
        body paints. See public/js/theme.js. -->
@@ -23,20 +23,13 @@
     </button>
     <div class="nav-collapse" id="mainNav">
       <ul class="nav-menu">
-        <li><a class="nav-link" href="/members" aria-current="page">Members</a></li>
+        <li><a class="nav-link" href="/members" aria-current="page">People nearby</a></li>
+        <li>
+          <a class="nav-link" href="/matches">Matches<span class="nav-badge" data-match-badge hidden></span></a>
+        </li>
         <li><a class="nav-link" href="/application">My profile</a></li>
-        <li><a class="nav-link" href="/game">Random match</a></li>
       </ul>
       <div class="nav-actions">
-        <form id="search-form" class="nav-search">
-          <label class="sr-only" for="myInput">Search members</label>
-          <svg class="nav-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <circle cx="6.2" cy="6.2" r="4.2" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M9.4 9.4L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <input id="myInput" class="input nav-search-input" type="search" placeholder="Search skills, city or postcode" aria-label="Search members">
-          <button id="searchBtn" class="btn btn--secondary" type="submit">Search</button>
-        </form>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
           <svg class="theme-icon theme-icon--sun" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="8" cy="8" r="3.25" stroke="currentColor" stroke-width="1.4"/>
@@ -52,14 +45,66 @@
   </header>
 
   <main class="page">
-    <div class="page-header">
-      <h1 class="page-title">Members</h1>
-      <p class="page-lede">Everyone here teaches one skill and wants to learn another.</p>
+    <div class="page-header page-header--split">
+      <div>
+        <h1 class="page-title">People nearby</h1>
+        <p class="page-lede">
+          Possible swaps first, then closest — both worked out from your own
+          profile.
+        </p>
+      </div>
+      <!-- The random match, which used to be a page of its own. Deciding who to
+           ask is something you do while looking at the list, not somewhere else. -->
+      <button id="randomBtn" class="btn btn--secondary" type="button">Match me with someone</button>
     </div>
+
+    <!-- Filled in by members.js when the ordering above cannot actually be done:
+         no profile yet, or a postal code we could not place. -->
+    <div id="profile-prompt" class="notice" hidden></div>
+
+    <div class="toolbar">
+      <form id="search-form" class="toolbar-search">
+        <label class="sr-only" for="myInput">Search members</label>
+        <svg class="toolbar-search__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <circle cx="6.2" cy="6.2" r="4.2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M9.4 9.4L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input id="myInput" class="input toolbar-search__input" type="search" placeholder="Search skills, city or postcode" aria-label="Search members">
+        <button id="searchBtn" class="btn btn--secondary" type="submit">Search</button>
+      </form>
+
+      <!-- A page called "people nearby" that lists someone 16,000 km away is
+           arguing with its own title. This is the bound; the rest fold into the
+           section at the bottom rather than disappearing. -->
+      <div class="toolbar-radius">
+        <label class="toolbar-radius__label" for="radius">Within</label>
+        <select id="radius" class="input toolbar-radius__select">
+          <option value="">Any distance</option>
+          <option value="50">50 km</option>
+          <option value="200">200 km</option>
+          <option value="1000">1000 km</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="match-panel" class="match-panel" hidden>
+      <h2 class="match-panel__caption">Mutuo picked</h2>
+      <div id="match-result" class="match-result"></div>
+    </div>
+    <p id="match-status" class="match-status" role="status" aria-live="polite"></p>
 
     <div id="member_cards" class="member-grid">
       <p class="empty-state">Loading members…</p>
     </div>
+
+    <section id="farther" class="farther" hidden>
+      <details>
+        <summary class="farther__summary">
+          Farther away (<span id="farther-count">0</span>)
+        </summary>
+        <div id="farther_cards" class="member-grid farther__grid"></div>
+      </details>
+    </section>
   </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

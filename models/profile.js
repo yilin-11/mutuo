@@ -60,6 +60,19 @@ module.exports = function(sequelize, DataTypes) {
         notEmpty: { msg: "Tell other members a little about yourself." },
         len: { args: [1, 2000], msg: "Please keep your bio under 2000 characters." }
       }
+    },
+    // Where the postal code above lands, resolved once when the profile is
+    // saved rather than every time the directory is drawn — see config/locate.js
+    // for why. Nullable because a geocoder that is unreachable, or a postal code
+    // it does not know, must not stop a member from having a profile: they sort
+    // to the end of the nearby list instead of by distance.
+    latitude: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    longitude: {
+      type: DataTypes.FLOAT,
+      allowNull: true
     }
   });
 

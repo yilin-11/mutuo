@@ -40,12 +40,27 @@ module.exports = function(app) {
   });
 
   // Member area. Everything below needs a session.
+  //
+  // The order of these three is the order they appear in the nav, and it is
+  // deliberate: who is nearby first, then who you have matched with, then your
+  // own profile — which is a thing you fill in once and edit rarely, and had no
+  // business being the second thing on the page.
   app.get("/members", isAuthenticated, sendPage("members.html"));
+
+  app.get("/matches", isAuthenticated, sendPage("matches.html"));
 
   // The profile form, where a member fills in or edits their own details.
   app.get("/application", isAuthenticated, sendPage("application.html"));
 
-  app.get("/game", isAuthenticated, sendPage("game.html"));
+  // The random match used to be a page of its own. It is a button on /members
+  // now — dealing a random member is something you do while browsing the ones
+  // near you, not a separate destination — so this is here for anyone holding
+  // an old link or a bookmark. A 302 rather than a 301: a permanent redirect is
+  // cached by the browser more or less forever, which is a lot of certainty to
+  // hand out about the shape of a menu.
+  app.get("/game", function(req, res) {
+    res.redirect("/members");
+  });
 
   // A single member's profile. The id in the URL is read by profile-detail.js,
   // which fetches /api/profiles/:id.

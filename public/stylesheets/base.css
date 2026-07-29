@@ -156,6 +156,16 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* The `hidden` attribute is only a `display: none` in the browser's own
+   stylesheet, so any component here that sets its own `display` silently beats
+   it — and an element the page had every reason to think was hidden appears
+   anyway. That is exactly what happened: the empty match count showed as a green
+   dot beside "Matches", and the profile notice as an empty bordered box.
+   Anything toggled with `hidden` relies on this rule. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   /* The page, not a surface: in dark these differ, and a card drawn in --bg
@@ -315,6 +325,27 @@ textarea {
   background-color: var(--bg-active);
 }
 
+/* How many mutual matches have arrived since you last looked. Only rendered
+   when there is one — a badge showing zero is a badge nobody reads. Filled by
+   paintMatchBadge in js/common.js. */
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background-color: var(--accent);
+  color: var(--accent-fg);
+  font-size: 11px;
+  font-weight: 600;
+  /* The nav's line height would otherwise push the pill off centre. */
+  line-height: 1;
+  vertical-align: middle;
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -429,6 +460,61 @@ textarea {
 
 .btn--block {
   width: 100%;
+}
+
+/* The match toggle, on a card and on a member's own page. A toggle rather than
+   an action, so it has two looks rather than a label that changes and nothing
+   else: pressed has to read as on from across a grid of twelve. */
+.match-btn {
+  padding: 5px 12px;
+  background-color: var(--bg-sunken);
+  border-color: var(--border-strong);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.match-btn:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  border-color: var(--accent-border);
+}
+
+.match-btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.match-btn--on {
+  background-color: var(--accent-tint);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.match-btn--on:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+/* A tick before the label, drawn rather than fetched, and inked only in the on
+   state — the box is reserved in both, so pressing the button does not change
+   its width and shift everything beside it. */
+.match-btn::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.match-btn--on::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3L4.8 8.6 9.5 3.9' fill='none' stroke='%234cb98a' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* The accent differs between the themes and a custom property cannot be
+   interpolated into a data URI, so the light theme gets its own tick — the same
+   arrangement select.input's chevron has above. */
+:root[data-theme="light"] .match-btn--on::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3L4.8 8.6 9.5 3.9' fill='none' stroke='%231f6f4f' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .btn--lg {
@@ -567,11 +653,86 @@ select.input {
   color: var(--text-muted);
 }
 
+/* They matched back. The only state shown on a card that is not about what the
+   viewer has done, so it gets a solid accent border rather than the tinted one
+   the teach pill uses — enough to pick out of a grid without competing with the
+   skill it sits above. */
+.pill--mutual {
+  background-color: var(--accent-tint);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
 .empty-state {
   padding: 64px 24px;
   text-align: center;
   color: var(--text-muted);
   font-size: 14px;
+}
+
+/* Something the page needs to say about itself before the reader can trust what
+   is below it — "this list is not actually sorted, and here is why". Deliberately
+   not .alert: nothing has gone wrong, and red would say it had. */
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border);
+  /* One accent edge, so it reads as the page talking rather than as another
+     card in the list. */
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* How this member's skills line up with the reader's. The single most useful
+   sentence on a card in an app about trading skills, and until now the one
+   thing it never said — the reader was left to compare two pills themselves.
+
+   A straight swap gets the accent; the one-way overlaps stay neutral, so a
+   grid of twelve does not read as twelve equally good ideas. */
+.swap-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.swap-note::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* Two arrows facing: the trade, drawn rather than fetched. currentColor
+     cannot reach inside a data URI, so the stroke is written per state
+     below. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%23a0a0a6' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.swap-note--both {
+  color: var(--accent);
+}
+
+.swap-note--both::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%234cb98a' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="light"] .swap-note::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%236b6b68' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="light"] .swap-note--both::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%231f6f4f' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 /* ------------------------------------------------------------ responsive -- */

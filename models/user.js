@@ -27,6 +27,16 @@ module.exports = function(sequelize, DataTypes) {
         // Checked before hashing, so the length applies to what the user typed.
         len: { args: [8, 100], msg: "Your password must be at least 8 characters." }
       }
+    },
+    // When this member last looked at their matches. What makes the count in the
+    // nav mean "new since you last looked" rather than "how many you have" — a
+    // number that never changes is a number nobody reads twice.
+    //
+    // Null for a member who has never opened the page, which correctly makes
+    // every mutual match they have new to them.
+    matchesSeenAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   });
 

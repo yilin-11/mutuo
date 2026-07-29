@@ -34,7 +34,8 @@ var sequelize = config.use_env_variable
 // db.User being undefined.
 [
   require("./user"),
-  require("./profile")
+  require("./profile"),
+  require("./match")
 ].forEach(function(define) {
   var model = define(sequelize, Sequelize.DataTypes);
   db[model.name] = model;

@@ -1,42 +1,163 @@
-/* The member directory, and the card that also appears on the random-match
-   page. Both pages load this file; only this one lays out the grid.
+/* The member card and the grid it sits in. Loaded by both pages that show
+   members — people nearby, and your matches.
 
    The card used to be a white rounded box with a brightly coloured avatar, two
    tags in two different colours, and a full-width black "Read More" button. The
-   button is gone — the card is the link — and the two skills are labelled
-   rather than left for the reader to infer from colour. */
+   button is gone — the card's name is the link, stretched over the whole card —
+   and the two skills are labelled rather than left for the reader to infer from
+   colour. */
 
-/* ----------------------------------------------------------- nav search --- */
+/* ---------------------------------------------------------- the toolbar --- */
 
-.nav-search {
+/* Search and the distance bound, above the list they act on.
+   Search used to live in the navbar, which put a control that filters one page
+   in the one place on screen that belongs to every page — and left it stranded
+   on the matches page, visible and doing nothing. It belongs to the list, so it
+   sits with the list, next to the other control that narrows it. */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.toolbar-search {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  /* Wide, but not the whole of a 1080px page. */
+  max-width: 480px;
 }
 
-.nav-search-icon {
+.toolbar-search__icon {
   position: absolute;
   left: 10px;
   color: var(--text-subtle);
   pointer-events: none;
 }
 
-.nav-search-input {
-  width: 260px;
+.toolbar-search__input {
+  flex: 1;
+  min-width: 0;
   padding-left: 30px;
   background-color: var(--bg-sunken);
 }
 
-.nav-search-input:focus {
+.toolbar-search__input:focus {
   background-color: var(--bg);
 }
 
 /* Safari draws its own clear button inside a type=search, at a size and weight
    nothing else on the page uses. */
-.nav-search-input::-webkit-search-decoration,
-.nav-search-input::-webkit-search-cancel-button {
+.toolbar-search__input::-webkit-search-decoration,
+.toolbar-search__input::-webkit-search-cancel-button {
   -webkit-appearance: none;
+}
+
+.toolbar-radius {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.toolbar-radius__label {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.toolbar-radius__select {
+  width: auto;
+  background-color: var(--bg-sunken);
+}
+
+/* ------------------------------------------------------- the page header -- */
+
+/* Title on the left, the random match on the right. The button used to be a
+   page of its own; picking someone at random is something you do while looking
+   at the list, so it lives above it now. */
+.page-header--split {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.page-count {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-subtle);
+}
+
+/* --------------------------------------------------------- random match --- */
+
+.match-status {
+  min-height: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.match-status:not(:empty) {
+  min-height: 22px;
+  margin-bottom: 12px;
+}
+
+/* A labelled panel rather than a loose card above the grid. The dealt member is
+   usually also somewhere in the list below, and without the caption the card
+   just looks like the list started early. */
+.match-panel {
+  /* Hugs the card inside it. Stretched to the page width it was a wide empty
+     box with one card in the corner, which read as a layout mistake rather than
+     as a frame around a pick. */
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 28px;
+  padding: 16px;
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.match-panel__caption {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+/* One card at the width it would have in the grid, rather than stretched across
+   the page — a dealt member should look like the members below it. */
+.match-result {
+  max-width: 320px;
+}
+
+/* members.js adds .animate after inserting the card, so the entrance runs on
+   each new deal rather than only on the first. */
+.match-result .member-card.animate {
+  animation: match-in 0.28s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+@keyframes match-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Someone who has asked not to be moved should not be. */
+@media (prefers-reduced-motion: reduce) {
+  .match-result .member-card.animate {
+    animation: none;
+  }
 }
 
 /* -------------------------------------------------------------- the grid -- */
@@ -58,7 +179,15 @@
 /* -------------------------------------------------------------- the card -- */
 
 .member-card {
-  display: block;
+  /* The anchor inside is stretched over this box, so it has to be the
+     containing block. */
+  position: relative;
+  /* A column, so the foot can be pushed to the bottom. Cards in a grid row are
+     all as tall as the tallest, and only some of them carry a swap note — without
+     this the shorter ones left a gap under their contact line while the taller
+     ones did not, and a row of cards looked ragged along the bottom. */
+  display: flex;
+  flex-direction: column;
   padding: 18px;
   background-color: var(--bg);
   border: 1px solid var(--border);
@@ -76,10 +205,28 @@
   transform: translateY(-1px);
 }
 
-.member-card:focus-visible {
-  outline: none;
+/* The ring belongs to the card even though the focus is on the name inside it,
+   because what the keyboard is pointing at is the whole card. Only the link
+   gets it — the match button inside has a ring of its own, and lighting up the
+   card as well would be two answers to one question. */
+.member-card:has(.member-card__link:focus-visible) {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.member-card__link {
+  /* No outline of its own: the card draws the ring above. */
+  outline: none;
+}
+
+/* The name is the link, but the whole card is the target. This is what keeps
+   the reach of the old card-as-one-big-anchor now that there is a button on it,
+   which cannot legally sit inside an <a>. */
+.member-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 
 .member-card__head {
@@ -91,6 +238,8 @@
 
 .member-card__identity {
   min-width: 0;
+  /* Takes the slack so a Mutual pill sits hard against the right edge. */
+  flex: 1;
 }
 
 .member-card__name {
@@ -108,6 +257,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* How far away, appended to the place with a separator drawn in CSS rather than
+   sitting in the text — so a member whose distance is unknown does not end up
+   with a dangling middot. */
+.member-card__distance {
+  color: var(--text-subtle);
+}
+
+.member-card__distance::before {
+  content: " · ";
 }
 
 /* Label and value per row: the same shape the profile page uses, so the trade
@@ -142,9 +302,29 @@
   vertical-align: middle;
 }
 
-.member-card__email {
+/* Between the head and the skills, at the card's full width so it never has to
+   compete for room with the distance. Styled in base.css, which the profile
+   page also loads. */
+.member-card .swap-note {
+  margin: -6px 0 14px;
+}
+
+.member-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Pushed to the bottom, so cards of different heights in one grid row still
+     line their contact lines up with each other. */
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--border);
+}
+
+/* Takes the slack and gives it up first: an address is the one thing on the
+   card that can lose its tail without the card losing its meaning. */
+.member-card__email {
+  flex: 1;
+  min-width: 0;
   font-size: 13px;
   color: var(--text-muted);
   overflow: hidden;
@@ -152,9 +332,106 @@
   white-space: nowrap;
 }
 
+/* The button itself is defined in base.css, which the profile page also loads.
+   This is the one thing about it that belongs to the card: it has to sit above
+   the stretched link, or the card's own anchor swallows every click meant for
+   it. */
+.member-card .match-btn {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* What a mutual match buys: the address stops being a string to copy and starts
+   being something to press. Above the stretched link for the same reason the
+   button is. */
+.member-card__email--link {
+  position: relative;
+  z-index: 1;
+  color: var(--accent);
+}
+
+.member-card__email--link:hover {
+  text-decoration: underline;
+}
+
+.member-card .pill--mutual {
+  flex-shrink: 0;
+}
+
+/* -------------------------------------------------------- farther away ---- */
+
+/* The members outside the chosen distance. Folded rather than dropped: the
+   bound is about what you are shown first, not a claim that nobody else
+   exists. A <details> so the disclosure needs no JavaScript. */
+.farther {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.farther__summary {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  /* Safari shows a triangle of its own alongside ::marker otherwise. */
+  list-style: none;
+}
+
+.farther__summary::-webkit-details-marker {
+  display: none;
+}
+
+.farther__summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--text-subtle);
+  transition: transform 0.14s ease;
+}
+
+/* The <details> is the child of .farther, so [open] belongs to it and not to
+   the section around it. */
+details[open] > .farther__summary::before {
+  transform: rotate(90deg);
+}
+
+.farther__summary:hover {
+  color: var(--text);
+}
+
+.farther__grid {
+  margin-top: 18px;
+}
+
 @media (max-width: 800px) {
-  .nav-search,
-  .nav-search-input {
-    width: 100%;
+  /* The two controls stack, each taking the full width. */
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-search {
+    max-width: none;
+  }
+
+  .toolbar-radius {
+    margin-left: 0;
+  }
+
+  .toolbar-radius__select {
+    flex: 1;
+  }
+
+  /* The random match goes under the title rather than beside it, where there is
+     no longer room for both. */
+  .page-header--split {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .match-result {
+    max-width: none;
   }
 }

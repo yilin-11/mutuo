@@ -3,9 +3,10 @@
 **Learn together, teach together.**
 
 Mutuo is a skill-swapping directory. Every member lists one skill they can teach
-and one they want to learn, plus the city and postal code they are in. Browse the
-directory, search by skill or location, and get in touch — or let Mutuo deal you
-a random member to reach out to.
+and one they want to learn, plus the city and postal code they are in. See who is
+nearby, sorted by how far away they actually are, search by skill or location,
+match with the ones you want to swap with — or let Mutuo deal you a random member
+when nobody in particular stands out.
 
 Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
@@ -15,7 +16,7 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 commands — see [Getting started](#getting-started). Either way the database is
 seeded with twelve members, so the directory has something in it on first load.
 
-The directory, mid-search. Every card carries the skill a member teaches and the
+People nearby, mid-search. Every card carries the skill a member teaches and the
 one they want; the two below are a reciprocal pair, which is what the seed data
 is built to show.
 
@@ -28,7 +29,12 @@ circle, so a directory of strangers does not double as a list of addresses.
 
 And when nobody in particular stands out, Mutuo deals you someone.
 
-![The random match page, having dealt a member](docs/match.png)
+![The random match, having dealt a member](docs/match.png)
+
+> The screenshots above predate the current interface — they show a **Members /
+> My profile / Random match** menu, a random match on a page of its own, and
+> cards with no swap note, distance or match button. The menu is now **People
+> nearby / Matches / My profile**. They want retaking.
 
 Nothing above is visible without a session — the directory is full of people, and
 `/api/profiles` is behind the same guard as the page that draws it. So the demo
@@ -67,7 +73,7 @@ fixed, and every one of those tests is still in the suite. `npm test` runs them.
 | Unbounded cache and queue on an open endpoint | `config/geocode.js` | Every distinct lookup added a permanent cache entry and a slot in a globally serialised queue, so an anonymous caller could grow memory without limit and push real users behind a backlog. Now capped, and it sheds load with a 503. |
 | `res.redirect()` and `res.sendFile()` on one response | `routes/html-routes.js` | Every logged-in visitor to `/` hit `ERR_HTTP_HEADERS_SENT`. |
 | Relative asset paths | `views/*.html` | `../js/common.js` resolved differently under `/detail/1` and `/detail/1/`. The trailing-slash form loaded no JavaScript at all and rendered a blank page with no error. |
-| Off-by-one in the random match | `public/js/game.js` | `Math.floor(Math.random() * length) + 1` could index past the end of the array and crash on the resulting `undefined`. |
+| Off-by-one in the random match | `public/js/members.js` | `Math.floor(Math.random() * length) + 1` could index past the end of the array and crash on the resulting `undefined`. It lived in `game.js` until the random match became a button on the members page. |
 | Save button that navigated away | `public/js/application.js` | The profile form's submit was an `<a href="/members">`, so the browser left before the request finished. Nothing was ever saved. |
 | Client-invented owner ids | `public/js/application.js` | The browser generated a random `User_ID` for each profile, so a member could never find or edit their own again. The owner now comes from the session and is never read from the request body. |
 | Unescaped member input | `public/js/common.js` | Names, cities and bios were interpolated straight into HTML strings. A bio containing `<img onerror=...>` ran script in every other member's browser. |
@@ -97,14 +103,18 @@ config/
   config.js            Per-environment database settings, read from the environment
   passport.js          Local email/password strategy and session serialisation
   geocode.js           Postal code -> coordinates via OpenStreetMap, cached and queued
+  locate.js            The geocode a profile gets once, when it is saved
+  distance.js          Haversine, for sorting the directory by how far away someone is
+  schema.js            Adds columns sync() cannot add to a table that already exists
   sessionStore.js      Sessions in the database rather than in process memory
   middleware/
     isAuthenticated.js Page guard: redirects anonymous visitors to /login
     apiAuth.js         API guard: answers 401 JSON
     rateLimit.js       In-memory fixed-window limiter, used on login and signup
 models/
-  user.js              Account and password hashing
+  user.js              Account, password hashing, and when matches were last seen
   profile.js           Member profile, one per user
+  match.js             One member marking another; two rows facing make a mutual match
 routes/
   html-routes.js       Page routes
   api-routes.js        JSON API
@@ -126,6 +136,42 @@ Pages live in `views/`, not under `public/`. Anything inside `public/` is served
 directly by `express.static` without passing through a route, so a page kept
 there is reachable regardless of the guard on its route — which is exactly the
 bug listed above.
+
+The member area is three pages, in this order: **people nearby**, **matches**,
+**my profile**. Nearby comes first because it is the reason to open the app;
+your own profile comes last because it is filled in once and edited rarely. The
+random match is a button on the nearby page rather than a destination of its own
+— deciding who to ask is something you do while looking at the list — and
+`/game`, which used to serve it, redirects to `/members`.
+
+**Nearby means nearby.** Each profile's postal code is resolved to coordinates
+once, when the profile is saved (`config/locate.js`), and stored on the row.
+Distance is then a great-circle calculation from the asker's own coordinates.
+Geocoding on read instead would mean one lookup per member per page load against
+a service that permits about one a second — a fourteen-second page for twelve
+members, and past its queue limit besides. A member whose postal code cannot be
+placed sorts to the end rather than disappearing. A **Within** control bounds the
+list, and everything past the bound folds into a *Farther away* section rather
+than vanishing — a page called "people nearby" that leads with someone 16,000 km
+away is arguing with its own title.
+
+**A possible swap outranks a short walk.** The seed data is built as six
+reciprocal pairs, and for a long time nothing in the app ever said so: the list
+was sorted by distance and the reader was left to compare two skill pills on
+every card to work out whether a trade was even possible. Each card now says it
+outright — *Straight swap*, *Teaches what you want*, *Wants what you teach* — and
+the ordering puts those first, with distance deciding within each group.
+Complementarity is the harder constraint: a neighbour who teaches nothing you
+want is not a swap at all, and the **Within** control is there for anyone who
+disagrees about how far is too far.
+
+**Matching tells someone.** Matching is one-directional and needs no acceptance,
+but until both sides have done it nothing has happened — so the count of *new*
+mutual matches sits on the **Matches** item in the nav, and clears when the page
+is opened. Without it, matching was a dead end: you pressed the button, the other
+member was never told, and the only way to find out they had pressed it back was
+to reopen a page you had no reason to reopen. A mutual match also turns the
+address on their card into a link, which is the point of the whole exercise.
 
 There is no CSS framework. The pages pulled Bootstrap off a CDN and then spent
 most of each stylesheet arguing with it, so it was removed rather than
@@ -220,22 +266,43 @@ DATABASE_URL=postgres://user:password@localhost:5432/mutuo DB_DIALECT=postgres n
 
 ## API
 
-| Method | Path                 | Auth | Purpose                                  |
-| ------ | -------------------- | ---- | ---------------------------------------- |
-| POST   | `/api/signup`        | —    | Create an account and log in             |
-| POST   | `/api/login`         | —    | Log in                                   |
-| POST   | `/api/logout`        | —    | End the session                          |
-| GET    | `/api/user_data`     | —    | Current account, or `{}` when logged out |
-| GET    | `/api/profiles`      | yes  | Every member profile                     |
-| GET    | `/api/profiles/me`   | yes  | Your own profile, or `null`              |
-| POST   | `/api/profiles`      | yes  | Create or update your own profile        |
-| PUT    | `/api/profiles/me`   | yes  | Same as above                            |
-| GET    | `/api/profiles/:id`  | yes  | One profile, `404` if unknown            |
-| GET    | `/api/geocode?zip=`  | yes  | Coordinates for a postal code            |
-| GET    | `/api/demo`          | —    | The demo account to offer, or `null`     |
+| Method | Path                     | Auth | Purpose                                    |
+| ------ | ------------------------ | ---- | ------------------------------------------ |
+| POST   | `/api/signup`            | —    | Create an account and log in               |
+| POST   | `/api/login`             | —    | Log in                                     |
+| POST   | `/api/logout`            | —    | End the session                            |
+| GET    | `/api/user_data`         | —    | Current account, or `{}` when logged out   |
+| GET    | `/api/profiles`          | yes  | Everyone but you, nearest first            |
+| GET    | `/api/profiles/me`       | yes  | Your own profile, or `null`                |
+| POST   | `/api/profiles`          | yes  | Create or update your own profile          |
+| PUT    | `/api/profiles/me`       | yes  | Same as above                              |
+| GET    | `/api/profiles/:id`      | yes  | One profile, `404` if unknown              |
+| GET    | `/api/matches`           | yes  | The members you have matched with          |
+| GET    | `/api/matches/count`     | yes  | `{ mutual, unseen }` — what the nav badge shows |
+| POST   | `/api/matches/seen`      | yes  | Mark the current mutual matches as seen    |
+| POST   | `/api/matches/:id`       | yes  | Match with that profile                    |
+| DELETE | `/api/matches/:id`       | yes  | Unmatch                                    |
+| GET    | `/api/geocode?zip=`      | yes  | Coordinates for a postal code              |
+| GET    | `/api/demo`              | —    | The demo account to offer, or `null`       |
 
 A profile always belongs to whoever is logged in — the owner comes from the
-session, never from the request body.
+session, never from the request body. The same goes for a match: you can only
+ever add or remove your own.
+
+Anything a profile carries that depends on *who is asking* is computed per
+request rather than stored: `distanceKm` from the asker's own postal code, `swap`
+(`"both"`, `"teaches"`, `"wants"` or `null`) for how the two sets of skills line
+up, `matched` if they have matched this member, and `mutual` if that member has
+matched them back. All four are `null`/`false` for a member who has not filled in
+a profile yet — there is nothing to compare against — which is why
+`/members` says so rather than quietly serving an unsorted list.
+
+Matching is one-directional and needs no acceptance: `mutual` is simply both rows
+existing. Both match routes are idempotent — matching someone twice, or
+unmatching someone you never matched, is the state you asked for rather than an
+error. `POST /api/matches/seen` is a POST and not a side effect of the `GET`
+because a browser may prefetch a `GET`, and a badge that clears itself because
+something looked ahead is a badge nobody can trust.
 
 `POST /api/login` allows ten *failed* attempts per address per fifteen minutes; a
 correct password does not count against the budget. `POST /api/signup` allows
