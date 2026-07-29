@@ -16,25 +16,31 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 commands — see [Getting started](#getting-started). Either way the database is
 seeded with fifty members, so the directory has something in it on first load.
 
-People nearby, mid-search. Every card carries the skill a member teaches and the
-one they want; the two below are a reciprocal pair, which is what the seed data
-is built to show.
+**People nearby.** Cards lead with the one thing a skill-swapping app is for:
+whether a trade is possible at all. A straight swap in Lisbon outranks a
+neighbour who teaches nothing you want — and the neighbour four kilometres away
+who *does* teach it comes second, not fortieth. Distance decides everything
+within a group, and the **Within** control bounds the lot.
 
-![The member directory, filtered by a search for Piano](docs/directory.png)
+![People nearby, showing straight swaps and one-way overlaps ahead of members sorted by distance](docs/directory.png)
 
-A profile. The map places a member by postal code and never more precisely than a
-circle, so a directory of strangers does not double as a list of addresses.
+**Matching is one-directional and needs no acceptance.** Press Match; if they
+press it back, the pair is mutual, the count on the nav item tells you so, and
+their address turns into a link. Mutual matches sort to the front — those are
+the ones where something can actually happen.
 
-![A member's profile, with a map of roughly where they are based](docs/profile.png)
+![The matches page, with two mutual matches ahead of one that has not been answered](docs/matches.png)
 
-And when nobody in particular stands out, Mutuo deals you someone.
+**A profile.** The map places a member by postal code and never more precisely
+than a circle, so a directory of strangers does not double as a list of
+addresses.
 
-![The random match, having dealt a member](docs/match.png)
+![A member's profile, with a swap note and a map of roughly where they are based](docs/profile.png)
 
-> The screenshots above predate the current interface — they show a **Members /
-> My profile / Random match** menu, a random match on a page of its own, and
-> cards with no swap note, distance or match button. The menu is now **People
-> nearby / Matches / My profile**. They want retaking.
+**And when nobody in particular stands out, Mutuo picks.** Not uniformly — from
+the people a swap is possible with, inside whatever distance you have set.
+
+![The random match, having picked a member who teaches what you want](docs/match.png)
 
 Nothing above is visible without a session — the directory is full of people, and
 `/api/profiles` is behind the same guard as the page that draws it. So the demo
@@ -57,10 +63,18 @@ was still learning the stack. I came back to it later and treated it the way I
 would treat an unfamiliar codebase at work: read it end to end, wrote tests that
 pinned down what it actually did, and fixed what those tests exposed.
 
-Most of what follows is that second pass. The feature set is deliberately
-unchanged; what changed is whether it holds up. **The table below is the
-record** — every defect in it was reproduced with a failing test before it was
-fixed, and every one of those tests is still in the suite. `npm test` runs them.
+Most of what follows is that second pass, and for the whole of it the feature set
+was deliberately left alone: what changed was whether it held up. **The table
+below is the record** — every defect in it was reproduced with a failing test
+before it was fixed, and every one of those tests is still in the suite.
+`npm test` runs them.
+
+A third pass has since changed the feature set, because holding up is not the
+same as being worth using. The app sorted a directory by insertion order and left
+the reader to work out, card by card, whether a trade was even possible — in an
+app whose entire premise is trading. That work is described under
+[Architecture](#architecture): distance that means something, an ordering that
+leads with a possible swap, and matching that tells the other person.
 
 ## What the second pass found
 
@@ -98,7 +112,7 @@ limiter now owns its store, and a test pins that down.
 
 ```
 app.js                 Express app: middleware, session, routes, error handling
-server.js              Entry point: syncs the schema, then listens
+server.js              Entry point: readies the schema, then listens
 config/
   config.js            Per-environment database settings, read from the environment
   passport.js          Local email/password strategy and session serialisation
@@ -148,15 +162,22 @@ random match is a button on the nearby page rather than a destination of its own
 once, when the profile is saved (`config/locate.js`), and stored on the row.
 Distance is then a great-circle calculation from the asker's own coordinates.
 Geocoding on read instead would mean one lookup per member per page load against
-a service that permits about one a second — the better part of a minute for
-fifty members, and many times over its queue limit besides. A member whose postal code cannot be
-placed sorts to the end rather than disappearing. A **Within** control bounds the
-list, and everything past the bound folds into a *Farther away* section rather
-than vanishing — a page called "people nearby" that leads with someone 16,000 km
-away is arguing with its own title.
+a service that permits about one a second — the better part of a minute for fifty
+members, and many times over its queue limit besides. A member whose postal code
+cannot be placed sorts to the end rather than disappearing. A **Within** control
+bounds the list, and everything past the bound folds into a *Farther away*
+section rather than vanishing — a page called "people nearby" that leads with
+someone 16,000 km away is arguing with its own title.
 
-**A possible swap outranks a short walk.** The seed data is built as six
-reciprocal pairs, and for a long time nothing in the app ever said so: the list
+The demo members are clustered several to a city for the same reason. One member
+per city put the nearest person three hundred kilometres away, which made the
+distance ordering a formality and left the **Within** control unable to return
+anything at all — a filter that can only ever come back empty is worse than no
+filter.
+
+**A possible swap outranks a short walk.** The seed data is built as
+twenty-five reciprocal pairs, and for a long time nothing in the app said so: the
+list
 was sorted by distance and the reader was left to compare two skill pills on
 every card to work out whether a trade was even possible. Each card now says it
 outright — *Straight swap*, *Teaches what you want*, *Wants what you teach* — and
@@ -225,12 +246,22 @@ the member directory.
 npm test
 ```
 
-37 tests, roughly two seconds, no fixtures to maintain. `test/api.test.js` drives
-the real Express app with supertest against a throwaway in-memory SQLite
-database, so the tests exercise routing, session handling, Passport and Sequelize
-together rather than mocking them apart. `test/rate-limit.test.js` covers the
-limiter on its own, against a budget of two, because the API's real limits are
-set high enough that the end-to-end suite never trips them.
+65 tests, a few seconds, no fixtures to maintain. `test/api.test.js` drives the
+real Express app with supertest against a throwaway in-memory SQLite database, so
+the tests exercise routing, session handling, Passport and Sequelize together
+rather than mocking them apart. `test/rate-limit.test.js` covers the limiter on
+its own, against a budget of two.
+
+The end-to-end suite now signs up more members than the signup limiter allows in
+an hour, and every request in it arrives from the same address — so it clears
+both limiters between tests. Otherwise a run long enough starts reporting `429`s
+from tests that only wanted an account to work with, which is the budget becoming
+the subject of tests that are about something else.
+
+Geocoding is the one thing the suite refuses to do: `config/locate.js` returns
+nothing under `NODE_ENV=test` rather than spend a second per saved profile in a
+third-party queue. Anything that cares about distance writes coordinates
+directly.
 
 CI runs `npm run lint && npm test` on Node 18, 20 and 22.
 
@@ -371,7 +402,7 @@ page offers nothing, and the app comes up with an empty directory.
 
 `render.yaml` describes a web service and a Postgres database; point Render at
 the repository and it reads the blueprint. There is also a `Dockerfile` for
-anywhere that takes a container. Both run `server.js`, which syncs the schema
+anywhere that takes a container. Both run `server.js`, which readies the schema
 before it binds a port, and neither involves `api/index.js`.
 
 Note that Render's free Postgres plan **expires 30 days** after it is created and
@@ -381,8 +412,20 @@ is deleted 14 days later, which is why the demo above is not on it.
 
 Honest about what is not production-ready:
 
-- `db.sequelize.sync()` creates tables but does not migrate them. Once there is
-  data worth keeping, switch to `sequelize-cli` migrations.
+- `db.sequelize.sync()` creates tables but never alters one it finds. Adding a
+  column to a model therefore does nothing to a database that already exists, and
+  since Sequelize names every attribute in its `SELECT`, the next query dies on
+  "no such column" — a new deployment is fine and every existing one breaks.
+  `config/schema.js` closes exactly that gap and nothing wider: it looks at what
+  a table has and adds what it is missing. Renames, type changes and drops are
+  all still unhandled, and `sync({ alter: true })` is not the answer because it
+  performs them. Once there is data worth keeping, switch to `sequelize-cli`
+  migrations.
+- The nearby list is loaded, ranked and sorted in memory, because the distance is
+  a haversine against the asker's own coordinates and writing that as an
+  `ORDER BY` means writing it once per dialect. Fine for a directory of this
+  size; the thing to add before the trigonometry moves into SQL is a bounding box
+  in the `WHERE` clause.
 - The rate-limit counters and the geocode cache are per-process and in memory.
   Behind more than one process each enforces its own budget; a shared store
   (Redis) is the fix. Sessions are already in the database and do not have this
