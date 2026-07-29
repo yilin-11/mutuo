@@ -24,10 +24,13 @@ $(document).ready(function() {
 
     // A circle rather than a pin: members share a postal code, not an address,
     // and a precise marker would imply more precision than we have.
+    // The site's one accent, so the circle reads as ours rather than as
+    // Leaflet's default blue.
     L.circle([location.lat, location.lng], {
-      color: "#2f6f4f",
-      fillColor: "#4c9a72",
-      fillOpacity: 0.35,
+      color: "#e8113c",
+      fillColor: "#e8113c",
+      fillOpacity: 0.22,
+      weight: 2,
       radius: 2000
     }).addTo(map);
   }

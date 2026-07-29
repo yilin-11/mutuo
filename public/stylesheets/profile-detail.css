@@ -1,18 +1,24 @@
 /* A single member's profile.
 
-   The page used to open with a 220px gradient banner and an avatar overlapping
-   it, centred, with the two skills as coloured badges under the name. The
-   banner is gone: it was decoration standing between the reader and the one
-   thing they came for, which is who this person is and how to reach them. The
-   facts are a description list now, the same label-and-value shape the
-   directory card uses. */
+   The page opens with the same artwork their tile carries in the directory, at
+   sleeve size, beside the name — so arriving here from a shelf feels like
+   opening the thing you pressed rather than landing on a different site.
+
+   This is deliberately not the banner the page had two versions ago: that was a
+   220px gradient strip with an avatar overlapping it and nothing in it, sitting
+   between the reader and what they came for. The artwork here is beside the
+   facts, not above them, and it is the member's own colour and initials rather
+   than decoration. */
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 26px;
-  font-size: 13px;
+  gap: 6px;
+  margin-bottom: 32px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-muted);
   transition: color 0.12s ease;
 }
@@ -22,29 +28,52 @@
 }
 
 .profile-head {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+/* The artwork. The tone class on it comes from the same function the directory
+   uses, so a member is the same colour in both places — and the gradient tokens
+   it resolves are the poster ones from base.css. */
+.profile-art {
+  position: relative;
+  aspect-ratio: 3 / 4;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  background-image: linear-gradient(155deg, var(--poster-from, #26262b),
+    var(--poster-to, #0b0b0d));
+  container-type: inline-size;
+  /* The plain size first as a fallback: a browser without container queries
+     drops the clamp and keeps this. */
+  font-size: 84px;
+  font-size: clamp(60px, 42cqi, 130px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.2);
+  user-select: none;
+  overflow: hidden;
 }
 
 .profile-head__identity {
   min-width: 0;
-  /* Takes the slack, so the match button sits against the right edge. */
-  flex: 1;
 }
 
-/* The match toggle, and the Mutual pill when there is one. */
-.profile-head__action {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+.profile-eyebrow {
+  margin-bottom: 14px;
 }
 
 .profile-name {
-  font-size: 24px;
-  letter-spacing: -0.02em;
+  font-size: clamp(30px, 4.4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: 10px;
 }
 
 .profile-place {
@@ -52,20 +81,47 @@
   color: var(--text-muted);
 }
 
+/* The long form of what a tile says in three words. The rule itself is in
+   base.css; this is only where it sits. Empty when there is no overlap, and an
+   empty box must not leave a gap. */
+#swap-note {
+  margin-top: 16px;
+}
+
+#swap-note:empty {
+  display: none;
+}
+
+/* The match toggle, and the Mutual pill when there is one. */
+.profile-head__action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.profile-head__action .btn {
+  padding: 11px 22px;
+  font-size: 12px;
+}
+
 .profile-facts {
   display: grid;
-  grid-template-columns: 130px 1fr;
+  grid-template-columns: 140px 1fr;
   align-items: center;
-  gap: 12px 16px;
-  margin: 0 0 28px;
-  padding: 20px 22px;
-  background-color: var(--bg-sunken);
+  gap: 14px 20px;
+  margin: 0 0 32px;
+  padding: 24px 26px;
+  background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
 
 .profile-facts dt {
-  font-size: 13px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-subtle);
 }
 
@@ -82,27 +138,16 @@
 .profile-email {
   font-size: 14px;
   color: var(--accent);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .profile-email:hover {
   text-decoration: underline;
 }
 
-/* How this member's skills line up with yours, directly under the pair of them.
-   The rule itself is in base.css; this is only where it sits. Empty when there
-   is no overlap, and an empty box must not leave a gap. */
-#swap-note {
-  margin: -18px 0 26px;
-}
-
-#swap-note:empty {
-  display: none;
-}
-
 .profile-bio {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
   color: var(--text);
   /* Prose wants a shorter measure than the container it sits in. */
   max-width: 40em;
@@ -111,18 +156,15 @@
 /* ------------------------------------------------------------------ map --- */
 
 .map-section {
-  margin-top: 36px;
+  margin-top: 44px;
 }
 
 .map-caption {
-  margin-bottom: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-subtle);
+  margin-bottom: 14px;
 }
 
 #mapid {
-  height: 320px;
+  height: 340px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   /* Leaflet's tiles are square and would otherwise sit over the rounded
@@ -160,23 +202,34 @@
 }
 
 /* OpenStreetMap has no dark tiles, and a white map is the brightest thing on a
-   dark page by a wide margin. Inverting and rotating the hue back turns the
-   standard raster into a passable dark one — a well-worn trick, and the only
+   black page by a very wide margin. Inverting and rotating the hue back turns
+   the standard raster into a passable dark one — a well-worn trick, and the only
    option that does not mean a second tile provider and a second attribution.
    Only the tiles: the circle marking the member lives in the overlay pane and
    would come out the wrong colour with them. */
 :root:not([data-theme="light"]) .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88);
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.86);
 }
 
 @media (max-width: 640px) {
+  /* The artwork goes above the name rather than beside it, and stops short of
+     the full width — a 3:4 panel across a phone screen is most of a screen. */
+  .profile-head {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .profile-art {
+    max-width: 168px;
+  }
+
   .profile-facts {
     grid-template-columns: 1fr;
     gap: 4px 0;
   }
 
   .profile-facts dd {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .profile-facts dd:last-child {

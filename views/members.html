@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>People nearby · Mutuo</title>
+  <title>Browse · Mutuo</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- In head and not deferred: the stored theme must be on <html> before the
        body paints. See public/js/theme.js. -->
@@ -23,7 +23,7 @@
     </button>
     <div class="nav-collapse" id="mainNav">
       <ul class="nav-menu">
-        <li><a class="nav-link" href="/members" aria-current="page">People nearby</a></li>
+        <li><a class="nav-link" href="/members" aria-current="page">Browse</a></li>
         <li>
           <a class="nav-link" href="/matches">Matches<span class="nav-badge" data-match-badge hidden></span></a>
         </li>
@@ -45,40 +45,35 @@
   </header>
 
   <main class="page">
-    <div class="page-header page-header--split">
-      <div>
-        <h1 class="page-title">People nearby</h1>
-        <p class="page-lede">
-          Possible swaps first, then closest — both worked out from your own
-          profile.
-        </p>
-      </div>
-      <!-- The random match, which used to be a page of its own. Deciding who to
-           ask is something you do while looking at the list, not somewhere else. -->
-      <button id="randomBtn" class="btn btn--secondary" type="button">Match me with someone</button>
-    </div>
+    <section class="browse-hero">
+      <p class="eyebrow eyebrow--accent browse-hero__eyebrow">People near you</p>
+      <h1 class="browse-hero__title">Every skill here is one someone will trade you.</h1>
+      <p class="browse-hero__lede">
+        Arranged by what people teach, closest first, with the trades you can
+        actually make at the top — all of it worked out from your own profile.
+      </p>
+      <!-- The random match, which used to be a page of its own. -->
+      <button id="randomBtn" class="btn btn--primary btn--lg" type="button">Match me with someone</button>
+    </section>
 
     <!-- Filled in by members.js when the ordering above cannot actually be done:
          no profile yet, or a postal code we could not place. -->
     <div id="profile-prompt" class="notice" hidden></div>
 
-    <div class="toolbar">
-      <form id="search-form" class="toolbar-search">
+    <div class="browse-bar">
+      <form id="search-form" class="browse-search">
         <label class="sr-only" for="myInput">Search members</label>
-        <svg class="toolbar-search__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <svg class="browse-search__icon" width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="6.2" cy="6.2" r="4.2" stroke="currentColor" stroke-width="1.5"/>
           <path d="M9.4 9.4L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <input id="myInput" class="input toolbar-search__input" type="search" placeholder="Search skills, city or postcode" aria-label="Search members">
+        <input id="myInput" class="input browse-search__input" type="search" placeholder="Search skills, city or postcode" aria-label="Search members">
         <button id="searchBtn" class="btn btn--secondary" type="submit">Search</button>
       </form>
 
-      <!-- A page called "people nearby" that lists someone 16,000 km away is
-           arguing with its own title. This is the bound; the rest fold into the
-           section at the bottom rather than disappearing. -->
-      <div class="toolbar-radius">
-        <label class="toolbar-radius__label" for="radius">Within</label>
-        <select id="radius" class="input toolbar-radius__select">
+      <div class="browse-radius">
+        <label class="browse-radius__label" for="radius">Within</label>
+        <select id="radius" class="input browse-radius__select">
           <option value="">Any distance</option>
           <option value="50">50 km</option>
           <option value="200">200 km</option>
@@ -87,13 +82,24 @@
       </div>
     </div>
 
-    <div id="match-panel" class="match-panel" hidden>
-      <h2 class="match-panel__caption">Mutuo picked</h2>
-      <div id="match-result" class="match-result"></div>
-    </div>
+    <!-- The category filters, built by members.js from the members it actually
+         has: a shelf nobody is standing on is not worth a button. -->
+    <nav id="category-chips" class="chips" aria-label="Filter by category"></nav>
+
     <p id="match-status" class="match-status" role="status" aria-live="polite"></p>
 
-    <div id="member_cards" class="member-grid">
+    <section id="match-panel" class="spotlight" hidden aria-label="Mutuo's pick">
+      <div id="match-result" class="spotlight__poster"></div>
+      <div class="spotlight__body">
+        <p class="eyebrow eyebrow--accent spotlight__eyebrow">Mutuo picked</p>
+        <p id="match-why" class="spotlight__why"></p>
+        <p id="match-note" class="spotlight__note"></p>
+      </div>
+    </section>
+
+    <!-- Either the shelves or one category's grid, depending on the chips
+         above. Built by members.js. -->
+    <div id="results" class="rails">
       <p class="empty-state">Loading members…</p>
     </div>
 
@@ -102,7 +108,7 @@
         <summary class="farther__summary">
           Farther away (<span id="farther-count">0</span>)
         </summary>
-        <div id="farther_cards" class="member-grid farther__grid"></div>
+        <div id="farther_cards" class="poster-grid farther__grid"></div>
       </details>
     </section>
   </main>

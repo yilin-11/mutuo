@@ -24,7 +24,7 @@
     </button>
     <div class="nav-collapse" id="mainNav">
       <ul class="nav-menu">
-        <li><a class="nav-link" href="/members">People nearby</a></li>
+        <li><a class="nav-link" href="/members">Browse</a></li>
         <li>
           <a class="nav-link" href="/matches">Matches<span class="nav-badge" data-match-badge hidden></span></a>
         </li>
@@ -50,20 +50,30 @@
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
         <path d="M8.5 3L4.5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      People nearby
+      Browse
     </a>
 
     <div id="profile-body">
       <div class="profile-head">
-        <!-- The initials and the tone class are set by profile-detail.js. -->
-        <div id="avatar" class="avatar avatar--lg" aria-hidden="true"></div>
+        <!-- The same artwork the directory tiles carry, at the size of a
+             sleeve: the initials and the tone class are set by
+             profile-detail.js, exactly as they were when this was a 64px
+             circle. -->
+        <div id="avatar" class="profile-art" aria-hidden="true"></div>
+
         <div class="profile-head__identity">
+          <p class="eyebrow profile-eyebrow">Member</p>
           <h1 class="userName profile-name">Loading…</h1>
           <p id="location" class="profile-place"></p>
+
+          <!-- How this member's two skills line up with yours. Filled in by
+               profile-detail.js, and empty when there is no overlap. -->
+          <div id="swap-note"></div>
+
+          <!-- Shown by profile-detail.js once it knows whether this profile is
+               the visitor's own — matching yourself is not a thing. -->
+          <div id="match-action" class="profile-head__action" hidden></div>
         </div>
-        <!-- Shown by profile-detail.js once it knows whether this profile is
-             the visitor's own — matching yourself is not a thing. -->
-        <div id="match-action" class="profile-head__action" hidden></div>
       </div>
 
       <dl class="profile-facts">
@@ -75,15 +85,11 @@
         <dd><a id="contactEmail" class="profile-email" href="#"></a></dd>
       </dl>
 
-      <!-- How this member's two skills line up with yours. Filled in by
-           profile-detail.js, and empty when there is no overlap. -->
-      <div id="swap-note"></div>
-
       <p id="bio" class="profile-bio"></p>
     </div>
 
     <section id="map-section" class="map-section">
-      <h2 class="map-caption">Roughly where this member is based</h2>
+      <h2 class="eyebrow map-caption">Roughly where this member is based</h2>
       <div id="mapid"></div>
     </section>
   </main>

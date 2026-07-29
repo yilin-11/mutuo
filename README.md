@@ -3,10 +3,10 @@
 **Learn together, teach together.**
 
 Mutuo is a skill-swapping directory. Every member lists one skill they can teach
-and one they want to learn, plus the city and postal code they are in. See who is
-nearby, sorted by how far away they actually are, search by skill or location,
-match with the ones you want to swap with — or let Mutuo deal you a random member
-when nobody in particular stands out.
+and one they want to learn, plus the city and postal code they are in. Browse
+them by what they teach, sorted by how far away they actually are, search by
+skill or location, match with the ones you want to swap with — or let Mutuo deal
+you a random member when nobody in particular stands out.
 
 Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
@@ -16,20 +16,23 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 commands — see [Getting started](#getting-started). Either way the database is
 seeded with fifty members, so the directory has something in it on first load.
 
-**People nearby.** Cards lead with the one thing a skill-swapping app is for:
-whether a trade is possible at all. A straight swap in Lisbon outranks a
-neighbour who teaches nothing you want — and the neighbour four kilometres away
-who *does* teach it comes second, not fortieth. Distance decides everything
-within a group, and the **Within** control bounds the lot.
+**Browse.** Fifty people in one flat list is a list; the same fifty on shelves is
+somewhere to shop. Members are dealt onto rows by what they teach — Music,
+Science & tech, Business — with the people you can actually trade with on the
+shelf above all of them, and a tile leads with the offer rather than with a name
+and a postcode. A straight swap in Lisbon outranks a neighbour who teaches
+nothing you want; the neighbour four kilometres away who *does* teach it comes
+second, not fortieth. Distance decides everything within a group, and the
+**Within** control bounds the lot.
 
-![People nearby, showing straight swaps and one-way overlaps ahead of members sorted by distance](docs/directory.png)
+![The browse page: a shelf of people you can trade with, then one shelf per category, each tile leading with the skill it teaches](docs/directory.png)
 
 **Matching is one-directional and needs no acceptance.** Press Match; if they
 press it back, the pair is mutual, the count on the nav item tells you so, and
 their address turns into a link. Mutual matches sort to the front — those are
 the ones where something can actually happen.
 
-![The matches page, with two mutual matches ahead of one that has not been answered](docs/matches.png)
+![The matches page, with three mutual matches ahead of the ones that have not been answered](docs/matches.png)
 
 **A profile.** The map places a member by postal code and never more precisely
 than a circle, so a directory of strangers does not double as a list of
@@ -38,7 +41,9 @@ addresses.
 ![A member's profile, with a swap note and a map of roughly where they are based](docs/profile.png)
 
 **And when nobody in particular stands out, Mutuo picks.** Not uniformly — from
-the people a swap is possible with, inside whatever distance you have set.
+the people a swap is possible with, inside whatever distance you have set — and
+it says which of those it drew from, so the pick reads as a suggestion rather
+than a coin flip.
 
 ![The random match, having picked a member who teaches what you want](docs/match.png)
 
@@ -151,12 +156,12 @@ directly by `express.static` without passing through a route, so a page kept
 there is reachable regardless of the guard on its route — which is exactly the
 bug listed above.
 
-The member area is three pages, in this order: **people nearby**, **matches**,
-**my profile**. Nearby comes first because it is the reason to open the app;
-your own profile comes last because it is filled in once and edited rarely. The
-random match is a button on the nearby page rather than a destination of its own
-— deciding who to ask is something you do while looking at the list — and
-`/game`, which used to serve it, redirects to `/members`.
+The member area is three pages, in this order: **browse**, **matches**, **my
+profile**. Browse comes first because it is the reason to open the app; your own
+profile comes last because it is filled in once and edited rarely. The random
+match is a button on the browse page rather than a destination of its own —
+deciding who to ask is something you do while looking at the list — and `/game`,
+which used to serve it, redirects to `/members`.
 
 **Nearby means nearby.** Each profile's postal code is resolved to coordinates
 once, when the profile is saved (`config/locate.js`), and stored on the row.
@@ -166,8 +171,8 @@ a service that permits about one a second — the better part of a minute for fi
 members, and many times over its queue limit besides. A member whose postal code
 cannot be placed sorts to the end rather than disappearing. A **Within** control
 bounds the list, and everything past the bound folds into a *Farther away*
-section rather than vanishing — a page called "people nearby" that leads with
-someone 16,000 km away is arguing with its own title.
+section rather than vanishing — a page that promises people near you and leads
+with someone 16,000 km away is arguing with itself.
 
 The demo members are clustered several to a city for the same reason. One member
 per city put the nearest person three hundred kilometres away, which made the
@@ -179,12 +184,24 @@ filter.
 twenty-five reciprocal pairs, and for a long time nothing in the app said so: the
 list
 was sorted by distance and the reader was left to compare two skill pills on
-every card to work out whether a trade was even possible. Each card now says it
-outright — *Straight swap*, *Teaches what you want*, *Wants what you teach* — and
+every card to work out whether a trade was even possible. Each tile now says it
+outright, burned into the top corner of its artwork — *Straight swap*, *Teaches what you want*, *Wants what you teach* — and
 the ordering puts those first, with distance deciding within each group.
 Complementarity is the harder constraint: a neighbour who teaches nothing you
 want is not a swap at all, and the **Within** control is there for anyone who
 disagrees about how far is too far.
+
+**Shelves, not a list.** That ordering was always the good part, and browsing did
+not change it — it changed the shape around it. The same ranked list is dealt
+onto one row per category, and nothing about which row comes first is hardcoded:
+the categories are discovered in the order the ranking meets them, so the shelf
+holding your best possible swap ends up at the top by construction, and the day
+the ranking changes this follows it. Above them all sits one shelf of everyone a
+trade is possible with, deliberately duplicating members that also appear in
+their own category — a shelf is a way in, not a partition, and a reader who came
+for music should not have to know the best of them was promoted out of it.
+Choosing a category swaps the shelves for a grid of that one category, because a
+shelf you have decided to stand in front of should not still scroll sideways.
 
 **Matching tells someone.** Matching is one-directional and needs no acceptance,
 but until both sides have done it nothing has happened — so the count of *new*
@@ -192,15 +209,21 @@ mutual matches sits on the **Matches** item in the nav, and clears when the page
 is opened. Without it, matching was a dead end: you pressed the button, the other
 member was never told, and the only way to find out they had pressed it back was
 to reopen a page you had no reason to reopen. A mutual match also turns the
-address on their card into a link, which is the point of the whole exercise.
+address on their tile into a link, which is the point of the whole exercise.
 
 There is no CSS framework. The pages pulled Bootstrap off a CDN and then spent
 most of each stylesheet arguing with it, so it was removed rather than
 overridden; its JavaScript had already been replaced by six lines in
 `common.js`. What took its place is `base.css`: custom properties for colour,
 spacing, radius and shadow, and one definition each for the button, input, nav
-and card. A page stylesheet only holds what that page adds. Nothing is fetched
+and poster. A page stylesheet only holds what that page adds. Nothing is fetched
 to render a page — no framework, no web font, no avatar service.
+
+**A member is drawn, not photographed.** Nobody uploads a picture, so a tile's
+artwork is a two-stop gradient chosen from their name and their initials set at
+the size of the tile — which costs no request, needs no key, and cannot arrive
+broken. Two avatar services have been through this codebase already; the first
+shut down and left every face on the site a broken image.
 
 **Dark is the default and light is opt-in.** The dark values sit unqualified on
 `:root`, so a first visit — and a visit with JavaScript turned off — gets dark

@@ -27,7 +27,7 @@ $(document).ready(function() {
     Mutuo.renderCards(
       container,
       profiles,
-      "No matches yet. Find someone on the people nearby page and press Match."
+      "No matches yet. Find someone on the browse page and press Match."
     );
     describe();
   }

@@ -1,48 +1,153 @@
 /* The landing page — everything a visitor sees before they have an account.
 
-   The previous version was a full-bleed dark green gradient with the wordmark
-   set at 7rem in a wide-tracked display size, plus two entrance animations.
-   This one puts the sentence first and the decoration nowhere: white, one
-   accent, and enough space around the headline that it does not need a
-   background to carry it. */
+   Three bands: a statement, the categories, and how it works. The middle one is
+   the point. A stranger's first question is not "what is this app" but "is
+   there anything here I want", and a table of contents answers it in the shape
+   the directory itself uses — which is also the first thing they will see once
+   they are through the door.
+
+   Two versions ago this page was a full-bleed green gradient with the wordmark
+   at 7rem and two entrance animations; one version ago it was the sentence
+   alone on white. This keeps that page's restraint in the copy and gives the
+   categories the colour. */
 
 .hero {
-  max-width: 760px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-inner {
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 96px 24px 120px;
-  text-align: center;
+  padding: 108px 32px 96px;
 }
 
 .hero-eyebrow {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--accent);
-  letter-spacing: 0.02em;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .hero-title {
   /* Scales with the viewport rather than stepping at a breakpoint, so the line
      break written into the markup lands the same way at every width. */
-  font-size: clamp(38px, 6.2vw, 60px);
-  letter-spacing: -0.035em;
-  line-height: 1.08;
-  margin-bottom: 22px;
+  font-size: clamp(44px, 8.5vw, 104px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  margin-bottom: 28px;
 }
 
 .hero-lede {
   max-width: 30em;
-  margin: 0 auto 36px;
-  font-size: 17px;
-  line-height: 1.65;
+  margin-bottom: 40px;
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--text-muted);
 }
 
 .hero-actions {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+}
+
+/* ---------------------------------------------------------------- bands --- */
+
+.categories,
+.how {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 88px 32px;
+}
+
+.how {
+  border-top: 1px solid var(--border);
+}
+
+.section-head {
+  margin-bottom: 40px;
+}
+
+.section-head .eyebrow {
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: clamp(26px, 3.6vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.032em;
+  max-width: 18em;
+}
+
+/* ------------------------------------------------------------ categories -- */
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The same gradients the member tiles use, from the tone classes in base.css —
+   so the categories on the way in and the shelves on the way through are
+   visibly the same system. A wide tile rather than a poster: a category is a
+   heading with a door on it, not a person. */
+.category {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-image: linear-gradient(145deg, var(--poster-from), var(--poster-to));
+}
+
+.category__link {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 168px;
+  padding: 22px;
+  transition: background-color 0.16s ease;
+}
+
+.category__link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.category__link:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* One character, at the size of a mark. Typed rather than drawn: these are
+   characters every system font has, so seven of them cost nothing and cannot
+   arrive broken. */
+.category__glyph {
+  font-size: 26px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.55);
+  flex-shrink: 0;
+}
+
+.category__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  /* Pushed to the foot of the tile, so seven tiles of different text lengths
+     still line their headings up with each other. */
+  margin-top: auto;
+}
+
+.category__name {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.022em;
+  color: #ffffff;
+}
+
+.category__skills {
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* ----------------------------------------------------------------- steps -- */
@@ -50,53 +155,61 @@
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin: 96px 0 0;
+  gap: 2px;
+  margin: 0;
   padding: 0;
   list-style: none;
-  text-align: left;
 }
 
+/* No boxes: one hairline between each step, which is enough to separate three
+   short paragraphs and leaves the page with one fewer rounded rectangle on it. */
 .step {
-  padding: 22px 20px 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background-color: var(--bg);
-  box-shadow: var(--shadow-sm);
+  padding: 26px 28px 30px;
+  border-top: 2px solid var(--border-strong);
 }
 
 .step-index {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-bottom: 14px;
-  border-radius: var(--radius-sm);
-  background-color: var(--accent-tint);
+  display: block;
+  margin-bottom: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .step-title {
-  font-size: 15px;
-  margin-bottom: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  margin-bottom: 8px;
 }
 
 .step-body {
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--text-muted);
 }
 
+.how-actions {
+  margin-top: 48px;
+}
+
 @media (max-width: 800px) {
-  .hero {
-    padding: 56px 20px 80px;
+  .hero-inner {
+    padding: 64px 18px 56px;
+  }
+
+  .categories,
+  .how {
+    padding: 56px 18px;
   }
 
   .steps {
     grid-template-columns: 1fr;
-    margin-top: 64px;
+  }
+
+  .step {
+    padding: 22px 0 26px;
   }
 }

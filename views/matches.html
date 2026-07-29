@@ -24,7 +24,7 @@
     </button>
     <div class="nav-collapse" id="mainNav">
       <ul class="nav-menu">
-        <li><a class="nav-link" href="/members">People nearby</a></li>
+        <li><a class="nav-link" href="/members">Browse</a></li>
         <li>
           <a class="nav-link" href="/matches" aria-current="page">Matches<span class="nav-badge" data-match-badge hidden></span></a>
         </li>
@@ -47,15 +47,16 @@
 
   <main class="page">
     <div class="page-header">
+      <p class="eyebrow eyebrow--accent">Your list</p>
       <h1 class="page-title">Matches</h1>
       <p class="page-lede">
-        The members you have matched with. A “Mutual” pill means they have
+        The members you have matched with. A “Mutual” flag means they have
         matched you back — those are the ones worth writing to first.
       </p>
-      <p id="match-summary" class="page-count" role="status" aria-live="polite"></p>
+      <p id="match-summary" class="match-summary" role="status" aria-live="polite"></p>
     </div>
 
-    <div id="member_cards" class="member-grid">
+    <div id="member_cards" class="poster-grid">
       <p class="empty-state">Loading your matches…</p>
     </div>
   </main>

@@ -5,7 +5,18 @@
    spend most of each stylesheet arguing with it — every look below is a
    restrained one, and Bootstrap's defaults are not. Its JavaScript was already
    gone (see the collapse handler in js/common.js), so the CSS was the last of
-   it. Two fewer network round trips, and nothing to override. */
+   it. Two fewer network round trips, and nothing to override.
+
+   The look is a browse-a-catalogue one, after MasterClass's category pages: a
+   black canvas, one red, poster tiles with the name burned into the artwork,
+   and headings set large and tight over small wide-tracked labels. What that
+   buys a skill-swapping directory is that a member reads as something on offer
+   rather than as a row in a table — which is what they are.
+
+   No web font. The type here is the system stack pushed to weight 800 with the
+   tracking pulled in, because a display face is a render-blocking request to
+   somebody else's server and this app has spent two commits removing exactly
+   that (see the avatar note further down). */
 
 /* ---------------------------------------------------------------- tokens -- */
 
@@ -16,9 +27,12 @@
 
 :root {
   /* Anything not listed per-theme below is shared, so it is only written once. */
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 12px;
+
+  /* Corners are nearly square now. A poster with an 12px radius reads as a card
+     with a picture in it; one with 4px reads as the picture. */
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-lg: 4px;
   --radius-pill: 999px;
 
   --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
@@ -28,49 +42,65 @@
 
   /* The header is a fixed height on every page, so anything positioned under
      it can say so rather than guessing. */
-  --nav-height: 56px;
-  --page-max: 1080px;
+  --nav-height: 64px;
+  /* Wider than the old 1080: a page whose job is rows of tiles wants the extra
+     two columns, and the reading pages ask for .page--narrow anyway. */
+  --page-max: 1280px;
 
   /* --- dark, the default --------------------------------------------------- */
 
-  /* Three greys rather than one: the page sits below the surfaces on it, which
-     is what makes a bordered card read as a card without a shadow that dark
-     backgrounds would swallow anyway. */
-  --bg-page: #0d0e10;
-  --bg: #17181b;
-  --bg-sunken: #101114;
-  --bg-hover: #1f2024;
-  --bg-active: #26272c;
+  /* Black, and then three greys above it. True black rather than a charcoal:
+     the posters are the only saturated thing on the page and they need a
+     backdrop that gives them all of the contrast it has. */
+  --bg-page: #000000;
+  --bg: #131315;
+  --bg-sunken: #09090a;
+  --bg-hover: #1e1e21;
+  --bg-active: #27272b;
 
-  --text: #ececed;
-  --text-muted: #a0a0a6;
-  --text-subtle: #6e6e75;
+  --text: #ffffff;
+  --text-muted: #a4a4ab;
+  --text-subtle: #6d6d75;
 
   /* Light borders on dark need more of themselves than dark ones on light do,
      or the card edge disappears. */
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.18);
+  --border: rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.22);
 
-  /* The light theme's #1f6f4f is unreadable on a dark background, so the accent
-     lightens rather than staying put. --accent-fg is what sits on top of it:
-     white on the dark green, near-black on the light one. */
-  --accent: #4cb98a;
-  --accent-hover: #62c79a;
-  --accent-fg: #08251a;
-  --accent-tint: rgba(76, 185, 138, 0.13);
-  --accent-border: rgba(76, 185, 138, 0.3);
-  --focus-ring: rgba(76, 185, 138, 0.22);
+  /* One red, used for the thing to press and the thing to notice, and nowhere
+     else. The green this replaces was doing both jobs and a third — it was also
+     the colour of the teach pill on every card, which meant a grid of fifty
+     members was fifty accents and none of them meant anything. */
+  --accent: #e8113c;
+  --accent-hover: #ff2a52;
+  --accent-fg: #ffffff;
+  --accent-tint: rgba(232, 17, 60, 0.14);
+  --accent-border: rgba(232, 17, 60, 0.42);
+  --focus-ring: rgba(232, 17, 60, 0.35);
 
-  --danger: #f87d74;
-  --danger-tint: rgba(248, 125, 116, 0.11);
-  --danger-border: rgba(248, 125, 116, 0.28);
+  --danger: #ff6b61;
+  --danger-tint: rgba(255, 107, 97, 0.11);
+  --danger-border: rgba(255, 107, 97, 0.3);
 
-  /* A translucent header over a dark page. */
-  --nav-bg: rgba(13, 14, 16, 0.78);
+  /* A translucent header over a black page. */
+  --nav-bg: rgba(0, 0, 0, 0.72);
 
-  /* A tinted panel behind light text on dark, and the reverse on light. Muted
-     enough either way that twelve of them in a grid read as texture rather than
-     as confetti, which is what the old avatar service produced. */
+  /* Poster artwork. Six two-stop gradients, one per tone, dark enough that
+     white type sits on them without a scrim doing all the work and distinct
+     enough that a rail of them reads as variety rather than as noise.
+
+     The same six in both themes, on purpose: a poster is a poster. Inverting
+     them for the light theme would turn a wall of artwork into a wall of pastel
+     rectangles and lose the one thing the tile is for. */
+  --poster-1-from: #13432f; --poster-1-to: #06180f;
+  --poster-2-from: #17263f; --poster-2-to: #070c15;
+  --poster-3-from: #402713; --poster-3-to: #170c04;
+  --poster-4-from: #2f1a42; --poster-4-to: #100718;
+  --poster-5-from: #103a47; --poster-5-to: #04161b;
+  --poster-6-from: #431823; --poster-6-to: #16060a;
+
+  /* Kept for the avatar, which still appears where a poster would be too much:
+     the profile form, and anywhere a member is named inline. */
   --tone-1-bg: #172b22; --tone-1-fg: #7fc9a4;
   --tone-2-bg: #1b2028; --tone-2-fg: #9fb0c6;
   --tone-3-bg: #29231a; --tone-3-fg: #c9ab82;
@@ -82,42 +112,44 @@
      and the borders above carry more of the separation. */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
 
 }
 
 /* --- light, opt-in --------------------------------------------------------- */
 
+/* Not a second design so much as the same one printed rather than projected:
+   white paper, black type, the same red, and the same posters — which on white
+   read as the plates in a catalogue. */
+
 :root[data-theme="light"] {
-  /* Nothing sits below the page here: white is already the bottom, so the page
-     and the surfaces on it are the same colour and the border does the work. */
   --bg-page: #ffffff;
   --bg: #ffffff;
-  --bg-sunken: #fbfbfa;
-  --bg-hover: #f6f6f5;
-  --bg-active: #f0f0ef;
+  --bg-sunken: #f6f6f5;
+  --bg-hover: #f2f2f1;
+  --bg-active: #e9e9e8;
 
-  /* Near-black rather than black, and greys warm enough not to read as blue
-     against the accent. */
-  --text: #1a1a19;
-  --text-muted: #6b6b68;
-  --text-subtle: #9a9a96;
+  --text: #0b0b0c;
+  --text-muted: #63636a;
+  --text-subtle: #93939a;
 
-  --border: rgba(0, 0, 0, 0.09);
-  --border-strong: rgba(0, 0, 0, 0.16);
+  --border: rgba(0, 0, 0, 0.11);
+  --border-strong: rgba(0, 0, 0, 0.2);
 
-  --accent: #1f6f4f;
-  --accent-hover: #1a5c42;
+  /* One stop darker than the dark theme's red: the same hue is noticeably
+     louder on white, and this is the colour of every primary button. */
+  --accent: #d10b33;
+  --accent-hover: #b00929;
   --accent-fg: #ffffff;
-  --accent-tint: #edf5f1;
-  --accent-border: rgba(31, 111, 79, 0.22);
-  --focus-ring: rgba(31, 111, 79, 0.12);
+  --accent-tint: rgba(209, 11, 51, 0.08);
+  --accent-border: rgba(209, 11, 51, 0.28);
+  --focus-ring: rgba(209, 11, 51, 0.2);
 
   --danger: #b4342c;
   --danger-tint: #fdf2f1;
   --danger-border: rgba(180, 52, 44, 0.2);
 
-  --nav-bg: rgba(255, 255, 255, 0.82);
+  --nav-bg: rgba(255, 255, 255, 0.86);
 
   --tone-1-bg: #eaf1ed; --tone-1-fg: #2f6f52;
   --tone-2-bg: #eef0f4; --tone-2-fg: #4a5568;
@@ -126,11 +158,9 @@
   --tone-5-bg: #e9f0f2; --tone-5-fg: #3d6470;
   --tone-6-bg: #f4eeee; --tone-6-fg: #79504e;
 
-  /* Lift, not drama: one hairline and one soft spread, both under 8% black.
-     Anything heavier looks dated next to a 1px border. */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
 
 }
 
@@ -181,11 +211,11 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   /* Tightening tracking as size grows is most of what makes a system font
      look deliberate at display sizes rather than merely large. */
-  letter-spacing: -0.011em;
-  line-height: 1.25;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 p {
@@ -228,25 +258,43 @@ textarea {
 .page {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 40px 32px 96px;
 }
 
 .page--narrow {
-  max-width: 680px;
+  max-width: 720px;
 }
 
 .page-header {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+}
+
+/* The small wide-tracked line above a heading. Every section on the site that
+   introduces itself does it with one of these, which is what keeps a page of
+   rows from needing a rule between each of them. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.eyebrow--accent {
+  color: var(--accent);
 }
 
 .page-title {
-  font-size: 26px;
-  margin-bottom: 6px;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.033em;
+  margin-bottom: 10px;
 }
 
 .page-lede {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 16px;
+  max-width: 46em;
 }
 
 /* -------------------------------------------------------------- nav bar --- */
@@ -258,31 +306,31 @@ textarea {
   height: var(--nav-height);
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 0 24px;
+  gap: 28px;
+  padding: 0 32px;
   background-color: var(--nav-bg);
   /* Kept legible over whatever scrolls beneath it without going opaque. */
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
   border-bottom: 1px solid var(--border);
 }
 
 .nav-brand {
   font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
 }
 
-/* The whole of the brand mark: one small accent square, which is enough to
-   place the colour on a page that is otherwise entirely neutral. */
+/* The whole of the brand mark: one red block, which is enough to place the
+   colour on a page that is otherwise black, white and grey. */
 .nav-brand::before {
   content: "";
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
+  width: 4px;
+  height: 16px;
   background-color: var(--accent);
 }
 
@@ -298,7 +346,7 @@ textarea {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -307,22 +355,25 @@ textarea {
 
 .nav-link {
   display: block;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--text-muted);
-  transition: background-color 0.12s ease, color 0.12s ease;
+  transition: color 0.12s ease;
 }
 
 .nav-link:hover {
-  background-color: var(--bg-hover);
   color: var(--text);
 }
 
+/* A rule under the current page rather than a filled pill: the nav is a strip
+   of small capitals now, and a rounded background around one of them was the
+   only soft shape left on the page. */
 .nav-link[aria-current="page"] {
   color: var(--text);
-  font-weight: 500;
-  background-color: var(--bg-active);
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 /* How many mutual matches have arrived since you last looked. Only rendered
@@ -332,15 +383,16 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 17px;
-  height: 17px;
+  min-width: 16px;
+  height: 16px;
   margin-left: 6px;
   padding: 0 5px;
   border-radius: var(--radius-pill);
   background-color: var(--accent);
   color: var(--accent-fg);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
   /* The nav's line height would otherwise push the pill off centre. */
   line-height: 1;
   vertical-align: middle;
@@ -349,7 +401,7 @@ textarea {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .nav-toggle {
@@ -410,16 +462,18 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 14px;
+  padding: 9px 18px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   line-height: 1.4;
   white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.12s ease, border-color 0.12s ease,
-    box-shadow 0.12s ease, opacity 0.12s ease;
+    color 0.12s ease, opacity 0.12s ease;
 }
 
 .btn:disabled {
@@ -427,10 +481,14 @@ textarea {
   cursor: not-allowed;
 }
 
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
 .btn--primary {
   background-color: var(--accent);
   color: var(--accent-fg);
-  box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -438,13 +496,13 @@ textarea {
 }
 
 .btn--secondary {
-  background-color: var(--bg);
+  background-color: transparent;
   border-color: var(--border-strong);
   color: var(--text);
-  box-shadow: var(--shadow-sm);
 }
 
 .btn--secondary:hover:not(:disabled) {
+  border-color: var(--text);
   background-color: var(--bg-hover);
 }
 
@@ -454,7 +512,6 @@ textarea {
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background-color: var(--bg-hover);
   color: var(--text);
 }
 
@@ -462,20 +519,25 @@ textarea {
   width: 100%;
 }
 
-/* The match toggle, on a card and on a member's own page. A toggle rather than
-   an action, so it has two looks rather than a label that changes and nothing
-   else: pressed has to read as on from across a grid of twelve. */
-.match-btn {
-  padding: 5px 12px;
-  background-color: var(--bg-sunken);
-  border-color: var(--border-strong);
-  color: var(--text);
+.btn--lg {
+  padding: 13px 26px;
   font-size: 13px;
 }
 
+/* The match toggle, on a poster and on a member's own page. A toggle rather
+   than an action, so it has two looks rather than a label that changes and
+   nothing else: pressed has to read as on from across a wall of tiles. */
+.match-btn {
+  padding: 6px 12px;
+  background-color: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+}
+
 .match-btn:hover:not(:disabled) {
-  background-color: var(--bg-hover);
-  border-color: var(--accent-border);
+  border-color: var(--text);
 }
 
 .match-btn:focus-visible {
@@ -484,63 +546,57 @@ textarea {
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
+/* Filled, not tinted. This is the one piece of state a member sets themselves
+   and it should be readable at a glance from the far side of a rail. */
 .match-btn--on {
-  background-color: var(--accent-tint);
-  border-color: var(--accent-border);
-  color: var(--accent);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
 }
 
 .match-btn--on:hover:not(:disabled) {
-  border-color: var(--accent);
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 /* A tick before the label, drawn rather than fetched, and inked only in the on
    state — the box is reserved in both, so pressing the button does not change
-   its width and shift everything beside it. */
+   its width and shift everything beside it. White in both themes now, because
+   the on state is a solid red fill in both. */
 .match-btn::before {
   content: "";
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   flex-shrink: 0;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .match-btn--on::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3L4.8 8.6 9.5 3.9' fill='none' stroke='%234cb98a' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-
-/* The accent differs between the themes and a custom property cannot be
-   interpolated into a data URI, so the light theme gets its own tick — the same
-   arrangement select.input's chevron has above. */
-:root[data-theme="light"] .match-btn--on::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3L4.8 8.6 9.5 3.9' fill='none' stroke='%231f6f4f' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-
-.btn--lg {
-  padding: 10px 18px;
-  font-size: 15px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3L4.8 8.6 9.5 3.9' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .field {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .field-label {
   display: block;
-  margin-bottom: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .input {
   width: 100%;
-  padding: 8px 12px;
-  background-color: var(--bg);
+  padding: 11px 14px;
+  background-color: var(--bg-sunken);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
@@ -559,7 +615,7 @@ textarea {
 
 textarea.input {
   resize: vertical;
-  min-height: 120px;
+  min-height: 130px;
 }
 
 select.input {
@@ -568,20 +624,21 @@ select.input {
   /* An inline chevron, so no icon font and no image request. Its colour is
      written into the data URI and a custom property cannot be interpolated into
      one, so the two themes get a rule each rather than sharing a token. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%23a0a0a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%23a4a4ab' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 32px;
+  padding-right: 34px;
 }
 
 :root[data-theme="light"] select.input {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%236b6b68' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%2363636a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .alert {
-  padding: 10px 12px;
-  margin-bottom: 18px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
   border: 1px solid var(--danger-border);
+  border-left: 3px solid var(--danger);
   border-radius: var(--radius-sm);
   background-color: var(--danger-tint);
   color: var(--danger);
@@ -594,7 +651,10 @@ select.input {
 /* Deterministic initials, drawn here rather than fetched. The old avatars came
    from a third-party image service — the one before that shut down and left
    every avatar on the site broken — and a coloured circle with two letters in
-   it is not worth a network request or a dependency. */
+   it is not worth a network request or a dependency.
+
+   The directory uses posters now, so this survives for the places where a
+   member is named rather than offered: inline, and in a form. */
 .avatar {
   display: flex;
   align-items: center;
@@ -603,7 +663,7 @@ select.input {
   height: 40px;
   border-radius: var(--radius-pill);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
   background-color: var(--avatar-bg, var(--bg-active));
   color: var(--avatar-fg, var(--text-muted));
@@ -626,15 +686,23 @@ select.input {
 .tone-5 { --avatar-bg: var(--tone-5-bg); --avatar-fg: var(--tone-5-fg); }
 .tone-6 { --avatar-bg: var(--tone-6-bg); --avatar-fg: var(--tone-6-fg); }
 
+/* The same six tones as poster artwork. One class does both jobs, so a member's
+   tile and their avatar can never disagree about which colour they are. */
+.tone-1 { --poster-from: var(--poster-1-from); --poster-to: var(--poster-1-to); }
+.tone-2 { --poster-from: var(--poster-2-from); --poster-to: var(--poster-2-to); }
+.tone-3 { --poster-from: var(--poster-3-from); --poster-to: var(--poster-3-to); }
+.tone-4 { --poster-from: var(--poster-4-from); --poster-to: var(--poster-4-to); }
+.tone-5 { --poster-from: var(--poster-5-from); --poster-to: var(--poster-5-to); }
+.tone-6 { --poster-from: var(--poster-6-from); --poster-to: var(--poster-6-to); }
+
 /* Skill pills. The two are deliberately unequal: what someone can teach is the
-   offer, and it carries the accent; what they want is context, and stays
-   neutral. Reading a card should not require the legend the old two-colour
-   badges needed. */
+   offer and it is set in capitals in the poster caption, so down here in the
+   metadata both of them stay quiet. */
 .pill {
   display: inline-flex;
   align-items: center;
   padding: 2px 9px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.6;
@@ -653,18 +721,22 @@ select.input {
   color: var(--text-muted);
 }
 
-/* They matched back. The only state shown on a card that is not about what the
-   viewer has done, so it gets a solid accent border rather than the tinted one
-   the teach pill uses — enough to pick out of a grid without competing with the
-   skill it sits above. */
+/* They matched back. A solid fill rather than a tint: it is the only state on a
+   tile that is not about what the viewer has done, and it has to survive being
+   read at poster scale. */
 .pill--mutual {
-  background-color: var(--accent-tint);
+  background-color: var(--accent);
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-fg);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
 }
 
 .empty-state {
-  padding: 64px 24px;
+  padding: 72px 24px;
   text-align: center;
   color: var(--text-muted);
   font-size: 14px;
@@ -679,30 +751,32 @@ select.input {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
-  padding: 14px 18px;
-  background-color: var(--bg-sunken);
+  margin-bottom: 28px;
+  padding: 16px 20px;
+  background-color: var(--bg);
   border: 1px solid var(--border);
   /* One accent edge, so it reads as the page talking rather than as another
-     card in the list. */
+     tile in the list. */
   border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   color: var(--text-muted);
 }
 
 /* How this member's skills line up with the reader's. The single most useful
-   sentence on a card in an app about trading skills, and until now the one
-   thing it never said — the reader was left to compare two pills themselves.
+   sentence in an app about trading skills.
 
-   A straight swap gets the accent; the one-way overlaps stay neutral, so a
-   grid of twelve does not read as twelve equally good ideas. */
+   On a poster it is a badge burned into the top of the artwork (see .poster__
+   badge below); this is the version for the profile page, where there is room
+   for the long wording. A straight swap gets the accent; the one-way overlaps
+   stay neutral, so a page of them does not read as equally good ideas. */
 .swap-note {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
 }
 
@@ -716,7 +790,7 @@ select.input {
   /* Two arrows facing: the trade, drawn rather than fetched. currentColor
      cannot reach inside a data URI, so the stroke is written per state
      below. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%23a0a0a6' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%23a4a4ab' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .swap-note--both {
@@ -724,15 +798,299 @@ select.input {
 }
 
 .swap-note--both::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%234cb98a' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%23e8113c' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 :root[data-theme="light"] .swap-note::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%236b6b68' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%2363636a' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 :root[data-theme="light"] .swap-note--both::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%231f6f4f' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 14 14'%3E%3Cpath d='M2 5h8M8 3l2.5 2L8 7M12 9H4M6 7L3.5 9 6 11' fill='none' stroke='%23d10b33' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------- the poster -- */
+
+/* One member, as something on offer. Built by Mutuo.profileCard in
+   js/common.js and used everywhere a member appears in a list: the browse page's
+   rails and grid, the matches page, and the random pick.
+
+   It replaces a bordered box that led with a 40px circle and two labelled rows.
+   That card answered "who is this" — reasonable for a table, wrong for a
+   directory you are meant to shop. This one leads with the artwork and the
+   offer, and keeps the address and the toggle underneath where they were.
+
+   Every member has a colour and two initials and nothing else to draw with, so
+   the artwork is a gradient from their tone with the initials set enormous
+   inside it. No photograph, no request to anyone, and it cannot break. */
+.poster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.poster__art {
+  position: relative;
+  /* A film-poster shape. Taller than it is wide is what makes a row of these
+     scan as a shelf rather than as a table. */
+  aspect-ratio: 3 / 4;
+  /* A column pushed to the bottom, so the caption is an ordinary flow child
+     sitting at the foot of the artwork. It could as easily be absolute — but
+     then it, rather than the artwork, would be the containing block for the
+     stretched link inside it, and the click target would run off the bottom of
+     the tile and over whatever is under it. */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background-image: linear-gradient(155deg, var(--poster-from, #26262b),
+    var(--poster-to, #0b0b0d));
+  /* So the glyph inside can be sized against the tile rather than the viewport,
+     and the same poster works at rail width and at grid width. */
+  container-type: inline-size;
+  transition: box-shadow 0.18s ease;
+}
+
+/* The initials, at the size of the artwork. Ordinary flow-level font sizing
+   would need a rule per layout; one container query does every width the tile
+   is ever asked to be. The plain declaration first is the fallback: a browser
+   without container queries drops the clamp and keeps 76px. */
+.poster__glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 76px;
+  font-size: clamp(56px, 42cqi, 150px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  /* Sits in the artwork rather than on it. */
+  color: rgba(255, 255, 255, 0.16);
+  user-select: none;
+  transition: transform 0.35s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+/* Dark enough at the foot for white type at any weight, and gone by halfway up
+   so the gradient underneath is still the thing you see. */
+.poster__scrim {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 26%, rgba(0, 0, 0, 0) 58%);
+}
+
+/* Static, so it does not become the containing block for the link overlay
+   inside it — see .poster__art. A z-index still applies: a flex item takes one
+   as though it were positioned, which is exactly enough to lift the caption
+   over the scrim without any of position: relative's side effects. */
+.poster__caption {
+  position: static;
+  z-index: 1;
+  padding: 14px;
+}
+
+.poster__name {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #ffffff;
+  /* Two lines and then an ellipsis: a long name should not push the offer under
+     it off the bottom of the artwork. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* What they teach, which is the reason the tile is in this row at all. */
+.poster__teach {
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The top corners of the artwork: how this member lines up with you on the
+   left, and whether they matched you back on the right. */
+.poster__flags {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  /* Above the scrim, which starts at the top of the box even though it only
+     inks the bottom of it. */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* The short form of the swap note, burned into the artwork. A straight swap is
+   solid red — it is the whole point of the app and there are rarely many — and
+   the one-way overlaps are a black chip, present but not shouting. */
+.poster__badge {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.poster__badge--both {
+  background-color: var(--accent);
+}
+
+/* Metadata, under the artwork rather than on it. Where somebody is and what
+   they want are things you read after deciding to look, so they get the plain
+   treatment and leave the tile itself to the offer. */
+.poster__meta {
+  padding: 12px 2px 0;
+}
+
+.poster__place {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* How far away, appended to the place with a separator drawn in CSS rather than
+   sitting in the text — so a member whose distance is unknown does not end up
+   with a dangling middot. */
+.poster__distance {
+  color: var(--text-subtle);
+}
+
+.poster__distance::before {
+  content: " · ";
+}
+
+.poster__wants {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poster__wants b {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.poster__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* Takes the slack and gives it up first: an address is the one thing on the
+   tile that can lose its tail without the tile losing its meaning. */
+.poster__email {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  /* Muted rather than subtle: eleven pixels is already the smallest thing on
+     the tile, and on the light theme the subtle grey left it barely there. */
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* What a mutual match buys: the address stops being a string to copy and starts
+   being something to press. Above the stretched link, or the tile's own anchor
+   swallows the click. */
+.poster__email--link {
+  position: relative;
+  z-index: 2;
+  color: var(--accent);
+}
+
+.poster__email--link:hover {
+  text-decoration: underline;
+}
+
+/* The name is the link, but the whole artwork is the target — the same reach
+   the old card-as-one-big-anchor had, without putting a button inside an <a>,
+   which is neither valid nor operable.
+
+   Stretched over the artwork only, not the metadata: the address underneath is
+   sometimes a mailto and the toggle beside it is always a button, and an
+   overlay across both would mean every press on the lower half of a tile had to
+   be excused from it. */
+.poster__link {
+  outline: none;
+}
+
+.poster__link::after {
+  content: "";
+  position: absolute;
+  /* Against the artwork, which is the nearest positioned ancestor now that the
+     caption is not one. */
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+
+.poster .match-btn {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.poster .pill--mutual {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Hover and focus. The artwork lifts a little and the glyph drifts in behind
+   it — enough motion to say the tile is a door, not so much that a rail of
+   twelve becomes a fairground. */
+@media (hover: hover) {
+  .poster:hover .poster__glyph {
+    transform: scale(1.08);
+  }
+
+  .poster:hover .poster__art {
+    box-shadow: 0 0 0 2px var(--accent), var(--shadow-md);
+  }
+}
+
+.poster:has(.poster__link:focus-visible) .poster__art {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 0 5px var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster__glyph {
+    transition: none;
+  }
+
+  .poster:hover .poster__glyph {
+    transform: none;
+  }
 }
 
 /* ------------------------------------------------------------ responsive -- */
@@ -741,7 +1099,7 @@ select.input {
   .nav {
     flex-wrap: wrap;
     height: auto;
-    padding: 12px 16px;
+    padding: 12px 18px;
     gap: 12px;
     position: static;
   }
@@ -772,11 +1130,15 @@ select.input {
     margin-right: 0;
   }
 
+  .nav-link[aria-current="page"] {
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
   .nav-actions {
     flex-wrap: wrap;
   }
 
   .page {
-    padding: 28px 16px 64px;
+    padding: 28px 18px 72px;
   }
 }

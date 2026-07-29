@@ -25,6 +25,40 @@ window.Mutuo = (function() {
     "Writing"
   ];
 
+  // The shelves the directory is arranged into. A list of fifty people is a
+  // list; the same fifty under seven headings is somewhere to browse, which is
+  // the whole point of sorting a catalogue by category rather than by nothing.
+  //
+  // A member is filed by what they teach, not by what they want: the page is
+  // read by someone looking for a teacher, and "Music" should mean "people who
+  // can teach you music".
+  //
+  // Every skill in SKILLS appears exactly once below. A skill that somehow does
+  // not — an old profile saved before the list changed — falls into the last
+  // shelf rather than disappearing off the page; see categoryOf.
+  var CATEGORIES = [
+    { name: "Music", skills: ["Guitar", "Piano"] },
+    { name: "Science & tech", skills: ["JavaScript", "Node.js", "Python", "SQL", "Mathematics"] },
+    { name: "Business", skills: ["Excel", "Tableau", "Presentation", "Project Management"] },
+    { name: "Writing & language", skills: ["Writing", "English"] },
+    { name: "Design", skills: ["Photoshop"] },
+    { name: "Food", skills: ["Cooking"] },
+    { name: "Sport & movement", skills: ["Aerobic Dance", "Skateboarding"] }
+  ];
+
+  var OTHER_CATEGORY = "Everything else";
+
+  // Which shelf a skill belongs on.
+  function categoryOf(skill) {
+    var wanted = String(skill || "");
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      if (CATEGORIES[i].skills.indexOf(wanted) > -1) {
+        return CATEGORIES[i].name;
+      }
+    }
+    return OTHER_CATEGORY;
+  }
+
   // Escapes text before it goes into an HTML string. Member names, cities and
   // bios are user input: interpolating them raw let anyone who typed
   // <img onerror=...> in their bio run script in every other member's browser.
@@ -92,7 +126,8 @@ window.Mutuo = (function() {
     wants: "Wants to learn what you teach"
   };
 
-  // The short form, for a card where the long one would wrap to three lines.
+  // The short form, for the badge on a poster where the long one would wrap to
+  // three lines over the artwork.
   var SWAP_LABELS_SHORT = {
     both: "Straight swap",
     teaches: "Teaches what you want",
@@ -129,71 +164,102 @@ window.Mutuo = (function() {
     return "mailto:" + encodeURIComponent(email).replace(/%40/g, "@");
   }
 
-  // The address at the foot of the card, and the one thing a mutual match
+  // The address at the foot of the tile, and the one thing a mutual match
   // actually buys you: it becomes something you can press.
   //
-  // Everyone's address is on every card either way — this is a directory of
+  // Everyone's address is on every tile either way — this is a directory of
   // people who joined to be contacted, and hiding it until both sides have
   // pressed a button would make the app worse at its job to make one feature
   // feel more important. What mutual changes is the invitation, not the access.
   function contactLine(profile) {
     if (!profile.mutual) {
-      return "<p class='member-card__email'>" + escapeHtml(profile.email) + "</p>";
+      return "<p class='poster__email'>" + escapeHtml(profile.email) + "</p>";
     }
-    return "<a class='member-card__email member-card__email--link' href='" +
+    return "<a class='poster__email poster__email--link' href='" +
       escapeHtml(mailto(profile.email)) + "'>" +
       escapeHtml(profile.email) +
     "</a>";
   }
 
-  // One member card. Every interpolated value is escaped.
+  // The swap, burned into the top corner of the artwork. The short wording,
+  // because it sits over a picture at ten pixels.
+  function posterBadge(kind) {
+    if (!kind || !SWAP_LABELS_SHORT[kind]) {
+      return "";
+    }
+    return "<span class='poster__badge poster__badge--" + escapeHtml(kind) + "'>" +
+      escapeHtml(SWAP_LABELS_SHORT[kind]) +
+    "</span>";
+  }
+
+  // The artwork half of a poster: a gradient from the member's tone with their
+  // initials set at the size of the tile, a scrim, and the name and the offer
+  // burned into the foot of it.
   //
-  // The card was a single <a> until it grew a match button, and a button inside
-  // a link is neither valid HTML nor operable — the link swallows the click. So
-  // the card is an <article> now, the name is the link, and the link's ::after
-  // is stretched over the whole card (see members.css) to keep the large target
-  // that made the old one worth having. The button sits above that overlay.
+  // Drawn, not fetched. Nobody here has uploaded a photograph and this app has
+  // twice been left with a directory of broken images by an avatar service that
+  // went away, so the artwork is two letters and a gradient — which needs no
+  // request, no key, and no third party learning every member's name.
   //
-  // The two skills are labelled rather than left to colour alone. The previous
-  // card put a green tag next to a blue one and expected the reader to work out
-  // which way round the trade went.
+  // `linked` is false for the one place a poster is not a door: a member's own
+  // profile page, where the artwork is already what you came for.
+  function posterArt(profile, linked) {
+    var name = escapeHtml(profile.firstName) + " " + escapeHtml(profile.lastName);
+
+    return "" +
+      "<div class='poster__art'>" +
+        "<span class='poster__glyph' aria-hidden='true'>" + escapeHtml(initials(profile)) + "</span>" +
+        "<span class='poster__scrim' aria-hidden='true'></span>" +
+        "<div class='poster__flags'>" +
+          posterBadge(profile.swap) +
+          // Beside the swap rather than under the name: both are facts about
+          // the two of you, and the caption below belongs to them alone.
+          (profile.mutual ? "<span class='pill pill--mutual'>Mutual</span>" : "") +
+        "</div>" +
+        "<div class='poster__caption'>" +
+          "<h2 class='poster__name'>" +
+            (linked
+              ? "<a class='poster__link' href='/detail/" + encodeURIComponent(profile.id) + "'>" + name + "</a>"
+              : name) +
+          "</h2>" +
+          "<p class='poster__teach'>Teaches " + escapeHtml(profile.teachSkill) + "</p>" +
+        "</div>" +
+      "</div>";
+  }
+
+  // One member, as a poster. Every interpolated value is escaped.
+  //
+  // The card this replaces was a bordered box that opened with a 40px circle
+  // and then answered "who is this" in two labelled rows. That is the right
+  // shape for a table and the wrong one for a directory you are meant to shop:
+  // fifty of them read as a spreadsheet, and the thing a reader actually scans
+  // for — what this person can teach — was the third line down in the smallest
+  // type on the tile. Here it is set in capitals across the artwork.
+  //
+  // The name is the link and the link's ::after is stretched over the artwork
+  // (see base.css), which keeps the large target the old card-as-one-big-anchor
+  // had without putting a button inside an <a>, where it would be neither valid
+  // nor operable. The toggle underneath sits above that overlay.
   function profileCard(profile) {
     var distance = formatDistance(profile.distanceKm);
 
     return "" +
-      "<article class='member-card' data-id='" + escapeHtml(profile.id) + "'>" +
-        "<div class='member-card__head'>" +
-          avatar(profile) +
-          "<div class='member-card__identity'>" +
-            "<h2 class='member-card__name'>" +
-              "<a class='member-card__link' href='/detail/" + encodeURIComponent(profile.id) + "'>" +
-                escapeHtml(profile.firstName) + " " + escapeHtml(profile.lastName) +
-              "</a>" +
-            "</h2>" +
-            "<p class='member-card__place'>" +
-              escapeHtml(profile.city) + " " + escapeHtml(profile.zipCode) +
-              (distance ? "<span class='member-card__distance'>" + escapeHtml(distance) + "</span>" : "") +
-            "</p>" +
+      "<article class='poster tone-" + avatarTone(profile) + "' data-id='" +
+        escapeHtml(profile.id) + "'>" +
+        posterArt(profile, true) +
+        "<div class='poster__meta'>" +
+          "<p class='poster__place'>" +
+            escapeHtml(profile.city) + " " + escapeHtml(profile.zipCode) +
+            (distance ? "<span class='poster__distance'>" + escapeHtml(distance) + "</span>" : "") +
+          "</p>" +
+          // The other half of the trade. Quieter than the offer above it on
+          // purpose: what someone wants matters once you are considering them,
+          // and never while you are scanning a shelf.
+          "<p class='poster__wants'>Wants <b>" + escapeHtml(profile.learnSkill) + "</b></p>" +
+          "<div class='poster__foot'>" +
+            contactLine(profile) +
+            matchButton(profile) +
           "</div>" +
-        "</div>" +
-        // A full-width row rather than a pill in the header: the header already
-        // holds the name, the place and the distance, and this is the sentence
-        // the reader most needs. Absent entirely when there is no overlap, so
-        // the cards that do have one stand out by having it at all.
-        swapNote(profile.swap, true) +
-        "<dl class='member-card__skills'>" +
-          "<dt>Teaches</dt>" +
-          "<dd><span class='pill pill--teach'>" + escapeHtml(profile.teachSkill) + "</span></dd>" +
-          "<dt>Wants</dt>" +
-          "<dd><span class='pill pill--learn'>" + escapeHtml(profile.learnSkill) + "</span></dd>" +
-        "</dl>" +
-        "<div class='member-card__foot'>" +
-          contactLine(profile) +
-          // Beside the toggle rather than up by the name: it is the other half
-          // of the same fact, and in the header it competed for width with the
-          // distance — which is the whole point of the page it appears on.
-          (profile.mutual ? "<span class='pill pill--mutual'>Mutual</span>" : "") +
-          matchButton(profile) +
         "</div>" +
       "</article>";
   }
@@ -342,10 +408,14 @@ window.Mutuo = (function() {
 
   return {
     SKILLS: SKILLS,
+    CATEGORIES: CATEGORIES,
+    OTHER_CATEGORY: OTHER_CATEGORY,
+    categoryOf: categoryOf,
     escapeHtml: escapeHtml,
     avatar: avatar,
     initials: initials,
     avatarTone: avatarTone,
+    posterArt: posterArt,
     profileCard: profileCard,
     renderCards: renderCards,
     formatDistance: formatDistance,

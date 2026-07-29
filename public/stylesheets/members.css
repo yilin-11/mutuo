@@ -1,151 +1,214 @@
-/* The member card and the grid it sits in. Loaded by both pages that show
-   members — people nearby, and your matches.
+/* The directory, as something to browse rather than to read.
 
-   The card used to be a white rounded box with a brightly coloured avatar, two
-   tags in two different colours, and a full-width black "Read More" button. The
-   button is gone — the card's name is the link, stretched over the whole card —
-   and the two skills are labelled rather than left for the reader to infer from
-   colour. */
+   Loaded by both pages that show members — people nearby, and your matches.
+   The poster itself is defined once in base.css, because three pages draw one;
+   what lives here is the furniture around it: the opening statement, the two
+   controls that narrow the list, the category shelves, and the grid.
 
-/* ---------------------------------------------------------- the toolbar --- */
+   The page this replaces was a single flat grid of every member in one order,
+   with a search box above it. The order was the good part and it survives
+   intact — possible swaps first, then distance, worked out by the server. What
+   it lacked was any shape: fifty tiles under one heading is a directory you
+   scroll past rather than one you shop. So the same fifty are dealt onto
+   shelves by what they teach, the way a catalogue of courses is, and the shelf
+   holding your best possible swap is the one at the top. */
 
-/* Search and the distance bound, above the list they act on.
+/* ---------------------------------------------------------------- opening -- */
+
+.browse-hero {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.browse-hero__eyebrow {
+  margin-bottom: 16px;
+}
+
+.browse-hero__title {
+  font-size: clamp(34px, 5.4vw, 60px);
+  font-weight: 800;
+  letter-spacing: -0.038em;
+  line-height: 1.03;
+  max-width: 13em;
+  margin-bottom: 18px;
+}
+
+.browse-hero__lede {
+  max-width: 40em;
+  margin-bottom: 28px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------- controls -- */
+
+/* Search and the distance bound, above the shelves they act on.
    Search used to live in the navbar, which put a control that filters one page
    in the one place on screen that belongs to every page — and left it stranded
    on the matches page, visible and doing nothing. It belongs to the list, so it
    sits with the list, next to the other control that narrows it. */
-.toolbar {
+.browse-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
-.toolbar-search {
+.browse-search {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
-  /* Wide, but not the whole of a 1080px page. */
-  max-width: 480px;
+  max-width: 520px;
 }
 
-.toolbar-search__icon {
+.browse-search__icon {
   position: absolute;
-  left: 10px;
+  left: 14px;
   color: var(--text-subtle);
   pointer-events: none;
 }
 
-.toolbar-search__input {
+.browse-search__input {
   flex: 1;
   min-width: 0;
-  padding-left: 30px;
-  background-color: var(--bg-sunken);
-}
-
-.toolbar-search__input:focus {
-  background-color: var(--bg);
+  padding-left: 38px;
 }
 
 /* Safari draws its own clear button inside a type=search, at a size and weight
    nothing else on the page uses. */
-.toolbar-search__input::-webkit-search-decoration,
-.toolbar-search__input::-webkit-search-cancel-button {
+.browse-search__input::-webkit-search-decoration,
+.browse-search__input::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
 
-.toolbar-radius {
+/* A page called "people nearby" that lists someone 16,000 km away is arguing
+   with its own title. This is the bound; the rest fold into the section at the
+   bottom rather than disappearing. */
+.browse-radius {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-left: auto;
 }
 
-.toolbar-radius__label {
-  font-size: 13px;
-  color: var(--text-muted);
+.browse-radius__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
   white-space: nowrap;
 }
 
-.toolbar-radius__select {
+.browse-radius__select {
   width: auto;
-  background-color: var(--bg-sunken);
-}
-
-/* ------------------------------------------------------- the page header -- */
-
-/* Title on the left, the random match on the right. The button used to be a
-   page of its own; picking someone at random is something you do while looking
-   at the list, so it lives above it now. */
-.page-header--split {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.page-count {
-  margin-top: 8px;
+  padding-top: 9px;
+  padding-bottom: 9px;
   font-size: 13px;
-  color: var(--text-subtle);
 }
 
-/* --------------------------------------------------------- random match --- */
+/* ------------------------------------------------------------------ chips -- */
 
-.match-status {
-  min-height: 0;
-  font-size: 14px;
+/* The categories, as a row of filters. "All" leaves the shelves as they are;
+   any other chip trades them for a single grid of that category, which is what
+   a category is for — a shelf you have decided to stand in front of should not
+   still be a shelf you have to scroll sideways. */
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 40px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  /* The row scrolls on a narrow screen; a scrollbar under seven buttons is
+     more furniture than the buttons. */
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
   color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s ease, border-color 0.12s ease,
+    background-color 0.12s ease;
 }
 
-.match-status:not(:empty) {
-  min-height: 22px;
-  margin-bottom: 12px;
+.chip:hover {
+  color: var(--text);
+  border-color: var(--text);
 }
 
-/* A labelled panel rather than a loose card above the grid. The dealt member is
-   usually also somewhere in the list below, and without the caption the card
-   just looks like the list started early. */
-.match-panel {
-  /* Hugs the card inside it. Stretched to the page width it was a wide empty
-     box with one card in the corner, which read as a layout mistake rather than
-     as a frame around a pick. */
-  width: fit-content;
-  max-width: 100%;
-  margin-bottom: 28px;
-  padding: 16px;
-  background-color: var(--bg-sunken);
+.chip:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* aria-pressed carries the state, so the look follows the attribute rather than
+   a second class that could disagree with it. */
+.chip[aria-pressed="true"] {
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg-page);
+}
+
+.chip__count {
+  margin-left: 7px;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------- spotlight -- */
+
+/* The random match, which used to be a page of its own. Deciding who to ask is
+   something you do while looking at the list, not somewhere else.
+
+   A band rather than a loose tile above the shelves: the member it deals is
+   usually also somewhere below, and without the frame the pick just looked like
+   the list had started early. */
+.spotlight {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 28px;
+  align-items: center;
+  /* Stopped well short of the page width. Stretched the whole way it was a
+     mostly empty band with a tile in the corner, which reads as a layout
+     mistake rather than as a frame around a pick. */
+  max-width: 880px;
+  margin-bottom: 44px;
+  padding: 26px;
+  background-color: var(--bg);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius-lg);
 }
 
-.match-panel__caption {
-  margin-bottom: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
-}
-
-/* One card at the width it would have in the grid, rather than stretched across
-   the page — a dealt member should look like the members below it. */
-.match-result {
-  max-width: 320px;
-}
-
-/* members.js adds .animate after inserting the card, so the entrance runs on
+/* members.js adds .animate after inserting the poster, so the entrance runs on
    each new deal rather than only on the first. */
-.match-result .member-card.animate {
-  animation: match-in 0.28s cubic-bezier(0.22, 0.9, 0.3, 1);
+.spotlight__poster .poster.animate {
+  animation: deal-in 0.32s cubic-bezier(0.22, 0.9, 0.3, 1);
 }
 
-@keyframes match-in {
+@keyframes deal-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -155,224 +218,225 @@
 
 /* Someone who has asked not to be moved should not be. */
 @media (prefers-reduced-motion: reduce) {
-  .match-result .member-card.animate {
+  .spotlight__poster .poster.animate {
     animation: none;
   }
 }
 
-/* -------------------------------------------------------------- the grid -- */
-
-.member-grid {
-  display: grid;
-  /* Column count follows the width rather than a breakpoint, so the directory
-     fills a wide window without a rule for each size of one. */
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-  gap: 16px;
+.spotlight__eyebrow {
+  margin-bottom: 12px;
 }
 
-/* The empty and loading states are single messages rather than cards, so they
-   take the whole row instead of sitting in the first column. */
-.member-grid .empty-state {
-  grid-column: 1 / -1;
+/* Why this one and not another. The pick is not uniform — it prefers people a
+   swap is possible with, inside whatever distance is set — and a band that says
+   so is the difference between a considered suggestion and a coin flip. */
+.spotlight__why {
+  font-size: clamp(19px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 10px;
 }
 
-/* -------------------------------------------------------------- the card -- */
+.spotlight__note {
+  font-size: 14px;
+  color: var(--text-muted);
+}
 
-.member-card {
-  /* The anchor inside is stretched over this box, so it has to be the
-     containing block. */
-  position: relative;
-  /* A column, so the foot can be pushed to the bottom. Cards in a grid row are
-     all as tall as the tallest, and only some of them carry a swap note — without
-     this the shorter ones left a gap under their contact line while the taller
-     ones did not, and a row of cards looked ragged along the bottom. */
+.match-status {
+  min-height: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.match-status:not(:empty) {
+  min-height: 22px;
+  margin-bottom: 16px;
+}
+
+/* ----------------------------------------------------------------- shelves -- */
+
+.rails {
   display: flex;
   flex-direction: column;
-  padding: 18px;
-  background-color: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.14s ease, box-shadow 0.14s ease,
-    transform 0.14s ease;
+  gap: 48px;
 }
 
-.member-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
-  /* One pixel. Enough to register as a response to the cursor without the card
-     appearing to jump out of the grid. */
-  transform: translateY(-1px);
+.rail__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
 }
 
-/* The ring belongs to the card even though the focus is on the name inside it,
-   because what the keyboard is pointing at is the whole card. Only the link
-   gets it — the match button inside has a ring of its own, and lighting up the
-   card as well would be two answers to one question. */
-.member-card:has(.member-card__link:focus-visible) {
+.rail__title {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.022em;
+}
+
+.rail__count {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The shelf worth looking at first: everyone the reader can actually trade
+   with. Marked with the accent rather than moved somewhere special, because it
+   is still just a shelf. */
+.rail--swap .rail__title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  margin-right: 12px;
+  vertical-align: -2px;
+  background-color: var(--accent);
+}
+
+.rail__nav {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.rail__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background-color 0.12s ease,
+    opacity 0.12s ease;
+}
+
+.rail__arrow:hover:not(:disabled) {
+  border-color: var(--text);
+  background-color: var(--bg-hover);
+}
+
+.rail__arrow:focus-visible {
+  outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-.member-card__link {
-  /* No outline of its own: the card draws the ring above. */
-  outline: none;
+/* Disabled rather than hidden at the ends of the track: a control that vanishes
+   is a control the reader has to re-find. */
+.rail__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
-/* The name is the link, but the whole card is the target. This is what keeps
-   the reach of the old card-as-one-big-anchor now that there is a button on it,
-   which cannot legally sit inside an <a>. */
-.member-card__link::after {
+.rail__frame {
+  position: relative;
+}
+
+/* A fade at the right edge, so a shelf that continues past the fold looks like
+   it does. The page background is flat black (or flat white), which is what
+   makes a plain gradient enough — no mask, no image. */
+.rail__frame::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 64px;
+  background-image: linear-gradient(to right, transparent, var(--bg-page));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
 }
 
-.member-card__head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+/* members.js sets this while the track has somewhere left to scroll. */
+.rail__frame--more::after {
+  opacity: 1;
 }
 
-.member-card__identity {
-  min-width: 0;
-  /* Takes the slack so a Mutual pill sits hard against the right edge. */
-  flex: 1;
-}
-
-.member-card__name {
-  font-size: 15px;
-  /* Long names truncate rather than wrapping to a second line and making one
-     card taller than the rest of its row. */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.member-card__place {
-  font-size: 13px;
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* How far away, appended to the place with a separator drawn in CSS rather than
-   sitting in the text — so a member whose distance is unknown does not end up
-   with a dangling middot. */
-.member-card__distance {
-  color: var(--text-subtle);
-}
-
-.member-card__distance::before {
-  content: " · ";
-}
-
-/* Label and value per row: the same shape the profile page uses, so the trade
-   reads the same way in both places. */
-.member-card__skills {
+.rail__track {
   display: grid;
-  grid-template-columns: 54px 1fr;
-  align-items: center;
-  gap: 8px 10px;
-  margin: 0 0 16px;
+  grid-auto-flow: column;
+  /* One tile width, everywhere. A shelf whose columns resize with the viewport
+     stops being a shelf — the point of the shape is that the next tile is
+     always half-visible at the edge. */
+  grid-auto-columns: 208px;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  /* Room for the focus ring the tiles draw outside themselves. */
+  padding: 4px 4px 8px;
+  margin: -4px -4px -8px;
+  scrollbar-width: none;
 }
 
-.member-card__skills dt {
-  font-size: 12px;
+.rail__track::-webkit-scrollbar {
+  display: none;
+}
+
+.rail__track > .poster {
+  scroll-snap-align: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail__track {
+    scroll-behavior: auto;
+  }
+}
+
+/* ------------------------------------------------------------------- grid -- */
+
+/* What a chosen category, the matches page, and the folded-away distant members
+   all use. Column count follows the width rather than a breakpoint, so it fills
+   a wide window without a rule for each size of one. */
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 30px 20px;
+}
+
+/* The empty and loading states are single messages rather than tiles, so they
+   take the whole row instead of sitting in the first column. */
+.poster-grid .empty-state {
+  grid-column: 1 / -1;
+}
+
+/* How many matches, and how many of them are mutual. On the matches page, under
+   the lede. */
+.match-summary {
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-subtle);
 }
 
-.member-card__skills dd {
-  margin: 0;
-  min-width: 0;
-}
-
-/* A pill hugs its label — inline-block rather than the grid item's full width,
-   which would draw a tinted bar the length of the card and lose the shape
-   entirely. It still has to be able to lose its tail rather than push the card
-   wider: "Project Management" is longer than the space it gets. */
-.member-card__skills .pill {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-}
-
-/* Between the head and the skills, at the card's full width so it never has to
-   compete for room with the distance. Styled in base.css, which the profile
-   page also loads. */
-.member-card .swap-note {
-  margin: -6px 0 14px;
-}
-
-.member-card__foot {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  /* Pushed to the bottom, so cards of different heights in one grid row still
-     line their contact lines up with each other. */
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-}
-
-/* Takes the slack and gives it up first: an address is the one thing on the
-   card that can lose its tail without the card losing its meaning. */
-.member-card__email {
-  flex: 1;
-  min-width: 0;
-  font-size: 13px;
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* The button itself is defined in base.css, which the profile page also loads.
-   This is the one thing about it that belongs to the card: it has to sit above
-   the stretched link, or the card's own anchor swallows every click meant for
-   it. */
-.member-card .match-btn {
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
-}
-
-/* What a mutual match buys: the address stops being a string to copy and starts
-   being something to press. Above the stretched link for the same reason the
-   button is. */
-.member-card__email--link {
-  position: relative;
-  z-index: 1;
-  color: var(--accent);
-}
-
-.member-card__email--link:hover {
-  text-decoration: underline;
-}
-
-.member-card .pill--mutual {
-  flex-shrink: 0;
-}
-
-/* -------------------------------------------------------- farther away ---- */
+/* --------------------------------------------------------- farther away ---- */
 
 /* The members outside the chosen distance. Folded rather than dropped: the
    bound is about what you are shown first, not a claim that nobody else
    exists. A <details> so the disclosure needs no JavaScript. */
 .farther {
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 56px;
+  padding-top: 28px;
   border-top: 1px solid var(--border);
 }
 
 .farther__summary {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-muted);
   cursor: pointer;
   /* Safari shows a triangle of its own alongside ::marker otherwise. */
@@ -386,8 +450,8 @@
 .farther__summary::before {
   content: "▸";
   display: inline-block;
-  margin-right: 8px;
-  color: var(--text-subtle);
+  margin-right: 10px;
+  color: var(--accent);
   transition: transform 0.14s ease;
 }
 
@@ -402,36 +466,52 @@ details[open] > .farther__summary::before {
 }
 
 .farther__grid {
-  margin-top: 18px;
+  margin-top: 28px;
 }
 
+/* ------------------------------------------------------------ responsive -- */
+
 @media (max-width: 800px) {
+  .browse-hero {
+    padding: 32px 0 28px;
+  }
+
   /* The two controls stack, each taking the full width. */
-  .toolbar {
+  .browse-bar {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .toolbar-search {
+  .browse-search {
     max-width: none;
   }
 
-  .toolbar-radius {
+  .browse-radius {
     margin-left: 0;
   }
 
-  .toolbar-radius__select {
+  .browse-radius__select {
     flex: 1;
   }
 
-  /* The random match goes under the title rather than beside it, where there is
-     no longer room for both. */
-  .page-header--split {
-    flex-direction: column;
-    align-items: stretch;
+  /* The arrows go: on a touch screen the track is already swipeable, and two
+     32px circles are worth more room than they earn. */
+  .rail__nav {
+    display: none;
   }
 
-  .match-result {
-    max-width: none;
+  /* The poster stacks above its explanation rather than beside it. */
+  .spotlight {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .spotlight__poster {
+    max-width: 190px;
+  }
+
+  .poster-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 24px 14px;
   }
 }

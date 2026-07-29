@@ -30,42 +30,133 @@
           </svg>
         </button>
         <a class="btn btn--ghost" href="/login">Log in</a>
-        <a class="btn btn--secondary" href="/signup">Get started</a>
+        <a class="btn btn--primary" href="/signup">Get started</a>
       </div>
     </div>
   </header>
 
-  <main class="hero">
-    <p class="hero-eyebrow">Skill swapping, near you</p>
-    <h1 class="hero-title">Learn together,<br>teach together.</h1>
-    <p class="hero-lede">
-      Offer a skill you know. Ask for one you don't. Mutuo pairs you with someone
-      nearby who wants the trade the other way round — free.
-    </p>
-    <div class="hero-actions">
-      <a href="/signup" class="btn btn--primary btn--lg">Get started</a>
-      <a href="/login" class="btn btn--secondary btn--lg">I already have an account</a>
-    </div>
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow eyebrow--accent hero-eyebrow">Skill swapping, near you</p>
+        <h1 class="hero-title">Learn together,<br>teach together.</h1>
+        <p class="hero-lede">
+          Offer a skill you know. Ask for one you don't. Mutuo pairs you with
+          someone nearby who wants the trade the other way round — free.
+        </p>
+        <div class="hero-actions">
+          <a href="/signup" class="btn btn--primary btn--lg">Get started</a>
+          <a href="/login" class="btn btn--secondary btn--lg">I already have an account</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- The categories, as they appear inside. Static markup: the directory is
+         behind a session — see /api/profiles — so this cannot and should not
+         count anybody. It is a table of contents, not a preview of members. -->
+    <section class="categories">
+      <div class="section-head">
+        <p class="eyebrow">Browse by category</p>
+        <h2 class="section-title">What members are teaching each other</h2>
+      </div>
+
+      <ul class="category-grid">
+        <li class="category tone-1">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">♪</span>
+            <span class="category__body">
+              <span class="category__name">Music</span>
+              <span class="category__skills">Guitar · Piano</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-2">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">&lt;/&gt;</span>
+            <span class="category__body">
+              <span class="category__name">Science &amp; tech</span>
+              <span class="category__skills">JavaScript · Node.js · Python · SQL · Mathematics</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-3">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">▤</span>
+            <span class="category__body">
+              <span class="category__name">Business</span>
+              <span class="category__skills">Excel · Tableau · Presentation · Project Management</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-4">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">¶</span>
+            <span class="category__body">
+              <span class="category__name">Writing &amp; language</span>
+              <span class="category__skills">Writing · English</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-5">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">◐</span>
+            <span class="category__body">
+              <span class="category__name">Design</span>
+              <span class="category__skills">Photoshop</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-6">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">✳</span>
+            <span class="category__body">
+              <span class="category__name">Food</span>
+              <span class="category__skills">Cooking</span>
+            </span>
+          </a>
+        </li>
+        <li class="category tone-1">
+          <a class="category__link" href="/signup">
+            <span class="category__glyph" aria-hidden="true">➤</span>
+            <span class="category__body">
+              <span class="category__name">Sport &amp; movement</span>
+              <span class="category__skills">Aerobic Dance · Skateboarding</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
 
     <!-- Three steps, because "swap a skill" is a simple idea that still needs
          saying once. Static markup: there is nothing here to fetch. -->
-    <ol class="steps">
-      <li class="step">
-        <span class="step-index">1</span>
-        <h2 class="step-title">List what you can teach</h2>
-        <p class="step-body">One skill you are happy to share, and one you would like to pick up.</p>
-      </li>
-      <li class="step">
-        <span class="step-index">2</span>
-        <h2 class="step-title">Find the other half</h2>
-        <p class="step-body">Search by skill, city or postcode — or let Mutuo deal you someone at random.</p>
-      </li>
-      <li class="step">
-        <span class="step-index">3</span>
-        <h2 class="step-title">Get in touch</h2>
-        <p class="step-body">Members share an email and roughly where they are. The rest is up to you.</p>
-      </li>
-    </ol>
+    <section class="how">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="section-title">Three things, then you are in</h2>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-index">01</span>
+          <h3 class="step-title">List what you can teach</h3>
+          <p class="step-body">One skill you are happy to share, and one you would like to pick up.</p>
+        </li>
+        <li class="step">
+          <span class="step-index">02</span>
+          <h3 class="step-title">Find the other half</h3>
+          <p class="step-body">Browse by category, search by city or postcode — or let Mutuo deal you someone at random.</p>
+        </li>
+        <li class="step">
+          <span class="step-index">03</span>
+          <h3 class="step-title">Get in touch</h3>
+          <p class="step-body">Members share an email and roughly where they are. The rest is up to you.</p>
+        </li>
+      </ol>
+
+      <div class="how-actions">
+        <a href="/signup" class="btn btn--primary btn--lg">Create your profile</a>
+      </div>
+    </section>
   </main>
 </body>
 

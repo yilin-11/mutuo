@@ -1,13 +1,16 @@
 /* Shared by the log in and sign up pages.
 
-   Previously a translucent card floating on a dark green gradient, with a
-   backdrop blur and a script wordmark. Now the plainest possible version of the
-   same thing: one bordered card, centred on a barely-there background, with the
-   fields given room. Everything structural — .input, .field, .btn — comes from
-   base.css, so what is left here is the shell and the demo offer. */
+   A black page with the form set in the middle of it and no box around it. The
+   card this replaces was doing a job that only exists on a light page — telling
+   you where the form stops — and on black a border around a form floating in
+   nothing is just an outline of the nothing. What separates the form now is the
+   space around it and the weight of the heading above it.
+
+   Everything structural — .input, .field, .btn — comes from base.css, so what
+   is left here is the shell and the demo offer. */
 
 .auth-page {
-  background-color: var(--bg-sunken);
+  background-color: var(--bg-page);
 }
 
 .auth-shell {
@@ -15,55 +18,54 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 48px 20px 64px;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
-  padding: 32px;
-  background-color: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  max-width: 420px;
 }
 
-/* Takes the accent square from .nav-brand, and centres the pair. Overriding
-   the display matters: .nav-brand is inline-flex, which shrinks to its content,
-   so justify-content would have had nothing spare to centre it in. */
+/* Takes the red block from .nav-brand, and centres the pair. Overriding the
+   display matters: .nav-brand is inline-flex, which shrinks to its content, so
+   justify-content would have had nothing spare to centre it in. */
 .auth-brand {
   display: flex;
   justify-content: center;
-  margin-bottom: 22px;
+  margin-bottom: 40px;
 }
 
 .auth-title {
-  font-size: 20px;
+  font-size: clamp(28px, 5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
   text-align: center;
-  margin-bottom: 4px;
+  margin-bottom: 10px;
 }
 
 .auth-lede {
-  margin-bottom: 26px;
+  margin-bottom: 34px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-muted);
 }
 
 .auth-switch {
-  margin-top: 22px;
+  margin-top: 28px;
   text-align: center;
   font-size: 14px;
   color: var(--text-muted);
 }
 
 .auth-switch a {
-  color: var(--accent);
-  font-weight: 500;
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 var(--accent);
 }
 
 .auth-switch a:hover {
-  text-decoration: underline;
+  color: var(--accent);
 }
 
 /* ------------------------------------------------------------ demo offer -- */
@@ -72,21 +74,27 @@
    is only looking rather than as more fields to fill in. Hidden in the markup
    and revealed by login.js only when the server says this is a demo. */
 .demo-hint {
-  margin-top: 26px;
-  padding-top: 22px;
-  border-top: 1px solid var(--border);
+  margin-top: 32px;
+  padding: 24px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
 }
 
 .demo-hint-lead {
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .demo-hint-body {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-muted);
 }
 
@@ -96,13 +104,17 @@
 .demo-creds {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 6px 12px;
+  gap: 8px 14px;
   align-items: center;
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   font-size: 13px;
 }
 
 .demo-creds dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-subtle);
 }
 
@@ -111,10 +123,10 @@
 }
 
 .demo-creds code {
-  padding: 2px 6px;
+  padding: 3px 7px;
   background-color: var(--bg-sunken);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text);
