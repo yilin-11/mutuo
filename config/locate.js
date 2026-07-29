@@ -2,9 +2,9 @@
 //
 // Why store them rather than look them up when the directory is drawn: sorting
 // members by distance needs a coordinate for every one of them, and the geocoder
-// is serialised at roughly one lookup a second (see config/geocode.js). Twelve
-// members would be a fourteen-second page load and would overrun the queue's
-// depth limit besides. A postal code changes only when a member edits their
+// is serialised at roughly one lookup a second (see config/geocode.js). Fifty
+// members would be the better part of a minute of page load, and would overrun
+// the queue's depth limit several times over besides. A postal code changes only when a member edits their
 // profile, so the lookup belongs on the write, where it happens once.
 var geocode = require("./geocode");
 

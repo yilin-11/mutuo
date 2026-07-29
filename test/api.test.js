@@ -1030,7 +1030,7 @@ describe("Mutuo", function() {
 
     // A demo that has been deployed before already has these members, and the
     // seed leaves anyone already present alone — so without a backfill the
-    // twelve of them would come back from a deploy with no coordinates at all,
+    // fifty of them would come back from a deploy with no coordinates at all,
     // and the nearby ordering would have nothing to sort on for the one
     // deployment whose job is to demonstrate it.
     it("fills in coordinates for demo members that were seeded without them", function() {

@@ -14,7 +14,7 @@ Express · Sequelize · Passport · SQLite/Postgres · jQuery
 
 **[Live demo](https://mutuo-demo.vercel.app/)** · Run it locally in three
 commands — see [Getting started](#getting-started). Either way the database is
-seeded with twelve members, so the directory has something in it on first load.
+seeded with fifty members, so the directory has something in it on first load.
 
 People nearby, mid-search. Every card carries the skill a member teaches and the
 one they want; the two below are a reciprocal pair, which is what the seed data
@@ -126,7 +126,7 @@ public/                Everything served as-is by express.static
     base.css           Design tokens and every shared component
     <page>.css         Only what one page adds to them
 scripts/
-  seed.js              Twelve demo members, six reciprocal teach/learn pairs
+  seed.js              Fifty demo members, twenty-five reciprocal teach/learn pairs
 test/
   api.test.js          End-to-end API tests
   rate-limit.test.js   The rate limiter on its own
@@ -148,8 +148,8 @@ random match is a button on the nearby page rather than a destination of its own
 once, when the profile is saved (`config/locate.js`), and stored on the row.
 Distance is then a great-circle calculation from the asker's own coordinates.
 Geocoding on read instead would mean one lookup per member per page load against
-a service that permits about one a second — a fourteen-second page for twelve
-members, and past its queue limit besides. A member whose postal code cannot be
+a service that permits about one a second — the better part of a minute for
+fifty members, and many times over its queue limit besides. A member whose postal code cannot be
 placed sorts to the end rather than disappearing. A **Within** control bounds the
 list, and everything past the bound folds into a *Farther away* section rather
 than vanishing — a page called "people nearby" that leads with someone 16,000 km
@@ -198,7 +198,7 @@ default and creates the file on first run.
 
 ```bash
 npm install
-npm run seed     # twelve demo members, so the directory is not empty
+npm run seed     # fifty demo members, so the directory is not empty
 npm start
 ```
 
